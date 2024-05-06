@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkSelfie_Admin=self.webpackChunkSelfie_Admin||[]).push([[2999],{2999:(e,s,d)=>{d.r(s),d.d(s,{default:()=>l});d(65043);var f=d(10593),i=d(70579);const l=()=>(0,i.jsx)(f.A,{mode:"ADD"})}}]);
+//# sourceMappingURL=2999.8762bac5.chunk.js.map

@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkSelfie_Admin=self.webpackChunkSelfie_Admin||[]).push([[2309],{22309:(e,n,s)=>{s.r(n),s.d(n,{CommentComponent:()=>m,default:()=>a});var t=s(65043),r=s(70579);class m extends t.Component{render(){return(0,r.jsx)(t.Fragment,{})}}const a=m}}]);
+//# sourceMappingURL=2309.324e8af4.chunk.js.map

@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkSelfie_Admin=self.webpackChunkSelfie_Admin||[]).push([[1817],{41817:(e,s,l)=>{l.r(s),l.d(s,{default:()=>i});l(65043);var t=l(73216),c=l(70579);const i=()=>(0,c.jsx)(t.BV,{children:(0,c.jsx)(t.qh,{path:"*",element:(0,c.jsx)(t.C5,{to:"product-list",replace:!0})})})}}]);
+//# sourceMappingURL=1817.d39b91c1.chunk.js.map
