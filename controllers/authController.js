@@ -10,6 +10,57 @@ require("dotenv").config({ path: ".env" });
 
 const SITE_URL = "http://localhost:5050/";
 
+exports.register = async (req, res, next) => {
+
+  const { name, dob, gender, userID, password } = req.body;
+
+  try {
+
+    const existUser = await userModel.findOne({ userID: userID });
+
+    if (existUser) {
+      const error = new Error(
+        "userID already exist, please pick another userID1"
+      );
+
+      req.status(409).json({
+        error: "userID already exist, please pick another userID!"
+      })
+      error.statusCode = 409
+      throw error;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = new userModel({
+      userID: userID,
+      password: hashedPassword,
+      roles: 'engineer',
+      status: false,
+      dob: dob,
+      gender: gender,
+      name: name,
+      organization: organization
+    });
+
+    await user.save(async (err, result) => {
+      res.status(200).json({
+        message: "Your request had been sent.\n Please wait until your account has been approved.",
+        user: user
+      })
+    })
+
+  } catch (error) {
+    console.debug("error in register new user", error)
+
+    if (error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+
+  }
+
+}
+
 exports.postSignup = async (req, res, next) => {
 
   const { userID, password } = req.body;
@@ -38,13 +89,13 @@ exports.postSignup = async (req, res, next) => {
       status: false
     });
 
-    await user.save(async (err, result) => {
-      
-      res.status(200).json({
-          message: "User created",
-          user: { id: result._id, userID: result.userID },
-        });
+    await user.save();
+
+    res.status(200).json({
+      message: "User created",
+      user: { id: result._id, userID: result.userID },
     });
+    
   } catch (err) {
     console.log(err);
     if (!err.statusCode) {
@@ -224,7 +275,7 @@ exports.avatarUpload = async (req, res, next) => {
         return res.status(200).send({ name: myFile.name, path: avatarURL });
       }
     );
-  } catch (error) {}
+  } catch (error) { }
 };
 
 exports.getUser = (req, res, next) => {
@@ -272,7 +323,7 @@ exports.passwordReset = async (req, res, next) => {
   }
 };
 
-exports.getUserInfo = (req, res, next) => {};
+exports.getUserInfo = (req, res, next) => { };
 
 exports.getAllUser = async (req, res, next) => {
   const allUser = await userModel.find();
