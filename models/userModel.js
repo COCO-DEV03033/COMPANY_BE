@@ -4,136 +4,83 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
-    id: {
+    userID: {
       type: String,
-      required: true,
+      require: true
     },
-    firstname: {
-      type: String,
-      required: false,
-    },
-    lastname: {
-      type: String,
-      required: false,
-    },
-    birthday: {
-      type: String,
-      require: false,
-    },
-    email: {
-      type: String,
-      required: true,
+    status: {
+      type: Boolean,
+      require: true
     },
     password: {
       type: String,
-      required: true,
+      require: true
     },
-    country: {
+    name: {
       type: String,
-      require: false,
+      require: false
     },
-    filledInfo: {
-      type: Boolean,
-      require: false,
+    organization: {
+      type: String,
+      require: false
     },
-    role: {
+    age: {
       type: Number,
-      require: true,
+      require: false
     },
-    IDStatus: {
+    gender: {
+      type: String,
+      require: false
+    },
+    dob: {
+      type: Date,
+      require: false
+    },
+    enter_date: {
+      type: Date,
+      require: false
+    },
+    university: {
+      type: String,
+      require: false
+    },
+    major_subject: {
+      type: String,
+      require: false
+    },
+    old_job: {
       type: String,
       require: false,
     },
-    IDCardUrl: {
-      type: String,
-      required: false,
-    },
-    IDStatusComment: {
+    tech_field: {
       type: String,
       require: false,
     },
-    paymentStatus: {
+    main_skill: {
       type: String,
       require: false,
     },
-    paymentDetail: {
-      tether: {
-        type: String,
-        required: false,
-      },
-      payoneer: {
-        type: String,
-        required: false,
-      },
-      cepa: {
-        type: String,
-        required: false,
-      },
-      require: false,
-    },
-    paymentStatusComment: {
-      type: String,
-      require: false,
-    },
-    emailStatus: {
-      type: Boolean,
-      require: false,
-    },
-    emailStatusComment: {
-      type: String,
-      require: false,
-    },
-    legalDocStatus: {
-      type: Boolean,
-      require: false,
-    },
-    legalDocStatusComment: {
-      type: String,
-      require: false,
-    },
-    legalDocUrl: {
-      type: String,
-      require: false,
-    },
-    referUser: {
-      type: String,
-      require: false,
-    },
-    referNumber: {
-      type: Number,
-      require: false,
-      default: 0,
-    },
-    accountStatus: {
-      type: String,
-      require: false,
-    },
-    registerDate: {
-      type: String,
-      require: false,
-    },
-    balance: {
+    tech_level: {
       type: Number,
       require: false,
     },
-    avatar: {
-      type: String,
-      require: true,
-      default: "",
-    },
-    legalSigned: {
-      type: Boolean,
-      require: false,
-    },
-    signName: {
+    lang_level: {
       type: String,
       require: false,
     },
-    legalDate: {
+    special: {
       type: String,
       require: false,
     },
-    lastUpdate: {
+    overview: {
+      type: String,
+      require: false,
+    },
+    created_at: {
+      type: Date,
+      require: false,
+    },
+    updated_at: {
       type: Date,
       require: false,
     },

@@ -1,95 +1,49 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
-const referModel = require("../models/referModel");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
-const sgMail = require("@sendgrid/mail");
 const { jwtDecode } = require("jwt-decode");
-// require("core-js/stable/atob");
 
-const selfieModel = require("../models/selfieModel");
 const mongoose = require("mongoose");
 
 require("dotenv").config({ path: ".env" });
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const SITE_URL = "http://localhost:5050/";
 
-const SITE_URL = "http://localhost:5000/";
+exports.postSignup = async (req, res, next) => {
 
-exports.postSignin = async (req, res, next) => {
-  const { email, password, referUser } = req.body;
+  const { userID, password } = req.body;
+
+  console.log(userID, password);
 
   try {
-    const exsitUser = await userModel.findOne({ email: email });
+    const exsitUser = await userModel.findOne({ userID: userID });
     if (exsitUser) {
       const error = new Error(
-        "Eamil already exist, please pick another email!"
+        "userID already exist, please pick another userID!"
       );
       res.status(409).json({
-        error: "Eamil already exist, please pick another email! ",
+        error: "userID already exist, please pick another userID! ",
       });
       error.statusCode = 409;
       throw error;
     }
-    if (referUser != "")
-      var exitUser = await userModel.findOne({ _id: referUser });
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const id = Date.now();
 
     const user = new userModel({
-      id: id,
-      email: email,
+      userID: userID,
       password: hashedPassword,
-      emailStatus: false,
-      filledInfo: false,
-      role: 0,
-      paymentStatus: "Empty",
-      IDStatus: "Empty",
-      referUser: referUser,
+      status: false
     });
 
     await user.save(async (err, result) => {
-      console.log("result", result, err);
-      if (result) {
-        if (exitUser) {
-          const refer = new referModel({
-            user: exitUser._id,
-            email: email,
-            status: "Pending",
-            to: result._id,
-            completedDate: "",
-          });
-
-          await refer.save();
-
-          await userModel.findOne({ _id: referUser }).update({
-            $set: { referNumber: exitUser.referNumber + 1 },
-          });
-        }
-        // const msg = {
-        //   to: email, // Change to your recipient
-        //   from: 'noreply@selfie.cash', // Change to your verified sender
-        //   subject: 'Verify your email address',
-        //   templateId: "d-61cd3f415350474c828863e08185ce63",
-        //   dynamic_template_data: {
-        //     button_url: "http://localhost:3010"
-        //   }
-        // }
-        // sgMail
-        //   .send(msg)
-        //   .then(() => {
-        //     console.log('Email sent')
-        //   })
-        //   .catch((error) => {
-        //     console.error(error)
-        //   })
-
-        res.status(200).json({
+      
+      res.status(200).json({
           message: "User created",
-          user: { id: result._id, email: result.email },
+          user: { id: result._id, userID: result.userID },
         });
-      }
     });
   } catch (err) {
     console.log(err);
@@ -102,12 +56,12 @@ exports.postSignin = async (req, res, next) => {
 
 var loadedUser;
 exports.postLogin = async (req, res, next) => {
-  const { email, password } = req.body;
-  console.log("email: ", email);
-  console.log("password: ", password);
+  const { userID, password } = req.body.data;
+
+  console.log(req.body)
 
   try {
-    const user = await userModel.findOne({ email: email });
+    const user = await userModel.findOne({ userID: userID });
     console.log("user done; ", user);
 
     if (!user) {
@@ -129,12 +83,9 @@ exports.postLogin = async (req, res, next) => {
         expiresIn: "60m",
       });
 
-      const referrals = await referModel.find({ user: user._id }).lean();
-
       res.status(200).json({
         token: token,
         emailStatus: loadedUser.emailStatus,
-        referrals: referrals,
       });
     }
   } catch (err) {
@@ -274,133 +225,6 @@ exports.avatarUpload = async (req, res, next) => {
       }
     );
   } catch (error) {}
-};
-
-exports.selfieUpload = async (req, res, next) => {
-  console.log("ddddddddddddddddddd", req.body);
-  let selfie;
-  let selfieCount;
-  let selfieItems;
-
-  const { userId, price, description, type, title, index } = req.body;
-  const myFile = req.files.file;
-
-  try {
-    const user = await userModel.findOne({ _id: userId });
-    const selfiesCount = await selfieModel.countDocuments({ owner: user.id });
-    console.log("selfiesCount:", selfiesCount);
-    console.log("index", index);
-    console.log("type of index:", typeof index);
-    console.log("ture or false", selfiesCount < index + 1);
-    if (selfiesCount < Number(index) + 1) {
-      console.log("creating");
-      const newSelfie = new selfieModel({
-        owner: user.id,
-        price: price,
-        type: type,
-        description: description,
-        title: title,
-        url: SITE_URL + "selfie/" + myFile.name,
-      });
-      await newSelfie.save();
-      selfie = newSelfie;
-    } else {
-      console.log("updating");
-      const selfies = await selfieModel.find({ owner: user.id });
-      console.log("selfies:", selfies);
-      const selfieToUpdate = selfies[index];
-      console.log("selfieToUpdate:", selfieToUpdate);
-      selfieToUpdate.price = price;
-      selfieToUpdate.type = type;
-      selfieToUpdate.description = description;
-      selfieToUpdate.title = title;
-      selfieToUpdate.url = SITE_URL + "selfie/" + myFile.name;
-      console.log("sselfieToUpdate.price:", selfieToUpdate);
-      await selfieToUpdate.save();
-    }
-    myFile.mv(
-      `${__dirname}/../public/selfie/${myFile.name}`,
-      async function (err) {
-        console.log("the error is: ", err);
-        if (err) {
-          return res.status(500).send({ msg: "Error occured" });
-        }
-        return res.status(200).send({ selfie: selfie });
-      }
-    );
-
-    //  mv() method places the file inside public directory
-  } catch (error) {}
-};
-
-exports.getSelfies = async (req, res, next) => {
-  const userId = req.body.userId;
-  let allSelfies = [];
-  console.log("eeeeeeeeeeeeeeeeeee", userId);
-  try {
-    let selfieId = "";
-    await userModel.findOne({ _id: userId }).then((res) => {
-      selfieId = res.id;
-    });
-    await selfieModel.find({ owner: selfieId }).then((res) => {
-      allSelfies = [...res];
-    });
-    return res.status(200).send({ allSelfies: allSelfies });
-  } catch (error) {}
-};
-
-exports.legalSign = async (req, res, next) => {
-  try {
-    const legalInfo = req.body.info;
-    var legalState = true;
-
-    if (!legalState) {
-      const error = new Error("Name is not mached!");
-      error.statusCode = 401;
-      throw error;
-    }
-    const result = await userModel
-      .findOne({ email: legalInfo.email })
-      .updateMany({
-        $set: {
-          legalSigned: true,
-          signName: legalInfo.name,
-          legalDate: legalInfo.date,
-        },
-      });
-
-    res.status(200).json({ message: "Legal Signed successfully!" });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
-};
-
-exports.getDataFromToken = async (req, res, next) => {
-  try {
-    const token = req.body.token;
-
-    let decode = jwtDecode(token);
-
-    const updateUserStatus = await userModel
-      .findOne({ email: decode.email })
-      .update({
-        $set: {
-          emailStatus: true,
-        },
-      });
-
-    const user = await userModel.findOne({ email: decode.email });
-
-    res.status(200).json({ user: user });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
 };
 
 exports.getUser = (req, res, next) => {

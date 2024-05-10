@@ -8,7 +8,6 @@ const cors = require("cors");
 
 // routes
 const authRouter = require("./routes/authRouter");
-const managementRouter = require("./routes/managementRouter");
 
 const app = express();
 
@@ -30,7 +29,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth/", authRouter);
-app.use("/api/management/", managementRouter);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -42,10 +40,11 @@ app.use((error, req, res, next) => {
 
 // connect to db
 // const MONGOOSE_URI = `mongodb+srv://doadmin:3iC507O4kc8Yp92T@db-mongodb-sgp1-93307-d4541958.mongo.ondigitalocean.com/selfieStore?tls=true&authSource=admin&replicaSet=db-mongodb-sgp1-93307`;
-const MONGOOSE_URI = `mongodb://localhost:27017/selfieStore`;
+const MONGOOSE_URI = process.env.MONGOOSE_URI;
+
 mongoose
   .connect(MONGOOSE_URI)
   .then((result) => {
-    app.listen(process.env.PORT || 5000);
+    app.listen(process.env.PORT || 5050);
   })
   .catch((err) => console.log(err));
