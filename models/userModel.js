@@ -24,6 +24,11 @@ const UserSchema = new Schema(
       type: String,
       require: false
     },
+    role: {
+      type: String,
+      require: true,
+      default: 'engineer'
+    },
     age: {
       type: Number,
       require: false
