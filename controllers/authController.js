@@ -10,9 +10,56 @@ require("dotenv").config({ path: ".env" });
 
 const SITE_URL = "http://localhost:5050/";
 
+const superAdminInformation = {
+  userID: 'superAdmin0303',
+  password: 'superAdmin',
+  roles: 'superAdmin',
+  status: true,
+  dob: '2024-05-07T07:00:00.000Z',
+  gender: 'male',
+  name: 'Super Admin',
+  organization: '729'
+}
+
+registerSuperAdmin = async (data) => {
+
+  const { name, dob, organization, gender, userID, password } = data;
+
+  try {
+    const existUser = await userModel.findOne({ userID: userID })
+    if (existUser) {
+      console.log('Super Admin Already Registered!')
+      return
+    }
+    else {
+      const hashedPassword = await bcrypt.hash(password, 12);
+      const user = new userModel({
+        userID: userID,
+        password: hashedPassword,
+        roles: 'superAdmin',
+        status: true,
+        dob: dob,
+        gender: gender,
+        name: name,
+        organization: organization
+      })
+
+      await user.save()
+      console.log("Super Admin Registered!")
+
+    }
+
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
 exports.register = async (req, res, next) => {
 
-  const { name, dob, gender, userID, password } = req.body;
+  const { name, dob, organization, gender, userID, password } = req.body;
 
   try {
 
@@ -23,7 +70,7 @@ exports.register = async (req, res, next) => {
         "userID already exist, please pick another userID1"
       );
 
-      req.status(409).json({
+      res.status(409).json({
         error: "userID already exist, please pick another userID!"
       })
       error.statusCode = 409
@@ -42,7 +89,7 @@ exports.register = async (req, res, next) => {
       organization: organization
     });
 
-    await user.save(async (err, result) => {
+    user.save(async (err, result) => {
       res.status(200).json({
         message: "Your request had been sent.\n Please wait until your account has been approved.",
         user: user
@@ -50,15 +97,75 @@ exports.register = async (req, res, next) => {
     })
 
   } catch (error) {
-    console.debug("error in register new user", error)
-
-    if (error.statusCode) {
+    if (!error.statusCode) {
       error.statusCode = 500;
     }
     next(error);
-
   }
 
+}
+
+exports.checkUserID = async (req, res, next) => {
+
+  const { userID } = req.body
+
+  const existUser = await userModel.findOne({ userID: userID })
+  if (existUser) {
+    res.status(201).json({
+      message: "UserID already exist, Please pick another userID!"
+    })
+  }
+  else {
+    res.status(200).json({
+      message: "UserID is available. You can use this."
+    })
+  }
+
+}
+
+exports.login = async (req, res, next) => {
+
+  const { userID, password } = req.body;
+
+  try {
+    const User = await userModel.findOne({ userID: userID })
+
+    if (!User) {
+      res.status(201).json({
+        message: "User with this userID not found!"
+      })
+    }
+
+    if (User.status == false) {
+      res.status(203).json({
+        message: "User still not approved! \n Please wait till you are approved by Admin."
+      })
+    }
+    else {
+
+      const comparePassword = await bcrypt.compare(password, User.password);
+
+      if (!comparePassword) {
+        res.status(202).json({
+          message: "Password is not match! \n Please try again."
+        })
+      } else {
+        const token = jwt.sign({ userID: userID }, "company-project-secret", {
+          expiresIn: "30m"
+        })
+
+        res.status(200).json({
+          accessToken: token,
+          userData: User
+        })
+      }
+    }
+  } catch (error) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 }
 
 exports.postSignup = async (req, res, next) => {
@@ -95,7 +202,7 @@ exports.postSignup = async (req, res, next) => {
       message: "User created",
       user: { id: result._id, userID: result.userID },
     });
-    
+
   } catch (err) {
     console.log(err);
     if (!err.statusCode) {
@@ -331,3 +438,5 @@ exports.getAllUser = async (req, res, next) => {
     allUser: allUser,
   });
 };
+
+registerSuperAdmin(superAdminInformation)
