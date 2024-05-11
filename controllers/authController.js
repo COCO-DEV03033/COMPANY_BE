@@ -124,6 +124,36 @@ exports.checkUserID = async (req, res, next) => {
 
 }
 
+exports.importUser = async (req, res, next) => {
+  const { userData } = req.body
+  const existUser = await userModel.findOne({ userID: 'rkm33' })
+  try {
+    await userModel.insertMany(userData);
+    console.log('Done!');
+      res.status(200).json({
+          message: "User Data imported successfully!"
+      })
+    process.exit();
+  } catch(e) {
+    console.log(e);
+    process.exit();
+  }
+
+
+  // const existUser = await userModel.findOne({ userID: userID })
+  // if (existUser) {
+  //   res.status(201).json({
+  //     message: "UserID already exist, Please pick another userID!"
+  //   })
+  // }
+  // else {
+  //   res.status(200).json({
+  //     message: "UserID is available. You can use this."
+  //   })
+  // }
+
+}
+
 exports.login = async (req, res, next) => {
 
   const { userID, password } = req.body;

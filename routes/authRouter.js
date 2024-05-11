@@ -6,6 +6,7 @@ const isAuth = require("../middleware/isAuth");
 router.post("/register", authController.register);
 router.post("/checkUserID", authController.checkUserID);
 router.post("/login", authController.login);
+router.post("/importUser", authController.importUser);
 
 router.get("/users", authController.getAllUser);
 
