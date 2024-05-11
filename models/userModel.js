@@ -22,14 +22,20 @@ const UserSchema = new Schema(
     },
     organization: {
       type: String,
-      require: false
+      require: false  // 7*9, 3*9, 8*2, 5*4, AI, NetProtect
+    },
+    department: {
+      type: String,
+      require: false   // 1, 2
+    },
+    team: {
+      type: String,
+      require: false   // 1, 2, ...
     },
     role: {
       type: String,
-
-      
       require: true,
-      default: 'user'
+      default: 'user' // superAdmin, Admin, User
     },
     age: {
       type: Number,
