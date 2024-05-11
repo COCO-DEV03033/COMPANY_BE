@@ -26,8 +26,10 @@ const UserSchema = new Schema(
     },
     role: {
       type: String,
+
+      
       require: true,
-      default: 'engineer'
+      default: 'user'
     },
     age: {
       type: Number,
@@ -50,6 +52,10 @@ const UserSchema = new Schema(
       require: false
     },
     major_subject: {
+      type: String,
+      require: false
+    },
+    avatar: {
       type: String,
       require: false
     },

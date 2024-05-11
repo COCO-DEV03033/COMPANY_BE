@@ -18,12 +18,14 @@ const superAdminInformation = {
   dob: '2024-05-07T07:00:00.000Z',
   gender: 'male',
   name: 'Super Admin',
-  organization: '729'
+  organization: '729',
+  avatar: SITE_URL + "/avatar/avatar.jpg",
+  age: 100
 }
 
 registerSuperAdmin = async (data) => {
 
-  const { name, dob, organization, gender, userID, password } = data;
+  const { name, dob, organization, gender, userID, password, avatar, age } = data;
 
   try {
     const existUser = await userModel.findOne({ userID: userID })
@@ -41,7 +43,9 @@ registerSuperAdmin = async (data) => {
         dob: dob,
         gender: gender,
         name: name,
-        organization: organization
+        organization: organization,
+        avatar: avatar,
+        age: age
       })
 
       await user.save()
@@ -66,16 +70,12 @@ exports.register = async (req, res, next) => {
     const existUser = await userModel.findOne({ userID: userID });
 
     if (existUser) {
-      const error = new Error(
-        "userID already exist, please pick another userID1"
-      );
-
-      res.status(409).json({
-        error: "userID already exist, please pick another userID!"
+      res.status(201).json({
+        message: "UserID already in use. Please pick another one."
       })
-      error.statusCode = 409
-      throw error;
     }
+
+    const today = new Date()
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = new userModel({
@@ -86,7 +86,8 @@ exports.register = async (req, res, next) => {
       dob: dob,
       gender: gender,
       name: name,
-      organization: organization
+      organization: organization,
+      age: today.getFullYear() - Number((dob.split(' '))[2])
     });
 
     user.save(async (err, result) => {
@@ -167,6 +168,15 @@ exports.login = async (req, res, next) => {
     next(err);
   }
 }
+
+//----------------      User-Management      -------------------//
+
+exports.getAllUser = async (req, res, next) => {
+  const allUser = await userModel.find();
+  res.status(200).json({
+    allUser: allUser,
+  });
+};
 
 exports.postSignup = async (req, res, next) => {
 
@@ -432,11 +442,5 @@ exports.passwordReset = async (req, res, next) => {
 
 exports.getUserInfo = (req, res, next) => { };
 
-exports.getAllUser = async (req, res, next) => {
-  const allUser = await userModel.find();
-  res.status(200).json({
-    allUser: allUser,
-  });
-};
 
 registerSuperAdmin(superAdminInformation)
