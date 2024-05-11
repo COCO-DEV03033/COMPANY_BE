@@ -19,13 +19,15 @@ const superAdminInformation = {
   gender: 'male',
   name: 'Super Admin',
   organization: '729',
+  department: 'Manage',
+  team: '',
   avatar: SITE_URL + "/avatar/avatar.jpg",
   age: 100
 }
 
 registerSuperAdmin = async (data) => {
 
-  const { name, dob, organization, gender, userID, password, avatar, age } = data;
+  const { name, dob, organization, department, team, gender, userID, password, avatar, age } = data;
 
   try {
     const existUser = await userModel.findOne({ userID: userID })
@@ -44,6 +46,8 @@ registerSuperAdmin = async (data) => {
         gender: gender,
         name: name,
         organization: organization,
+        department: department,
+        team: team,
         avatar: avatar,
         age: age
       })
@@ -63,7 +67,7 @@ registerSuperAdmin = async (data) => {
 
 exports.register = async (req, res, next) => {
 
-  const { name, dob, organization, gender, userID, password } = req.body;
+  const { name, dob, organization, department, team, gender, userID, password } = req.body;
 
   try {
 
@@ -81,12 +85,14 @@ exports.register = async (req, res, next) => {
     const user = new userModel({
       userID: userID,
       password: hashedPassword,
-      roles: 'engineer',
+      role: 'Engineer',
       status: false,
       dob: dob,
       gender: gender,
       name: name,
       organization: organization,
+      department: department,
+      team: team,
       age: today.getFullYear() - Number((dob.split(' '))[2])
     });
 
