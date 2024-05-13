@@ -184,6 +184,118 @@ exports.getAllUser = async (req, res, next) => {
   });
 };
 
+exports.getUserByID = async (req, res, next) => {
+
+  const { userID } = req.params
+
+  try {
+
+    const existUser = await userModel.findOne({ userID: userID }).lean()
+
+    if (!existUser) {
+      const error = new Error("user with this ID not found!");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    res.status(200).json({
+      existUser
+    });
+
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+exports.removeUser = async (req, res, next) => {
+
+  const { userID } = req.params
+
+  try {
+    const result = await userModel.deleteOne({ userID: userID })
+
+    if (result.ok) {
+      res.status(200).json({
+
+      })
+    }
+
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+
+  }
+
+
+
+}
+
+exports.updateUser = async (req, res, next) => {
+
+  try {
+    const { name, dob, organization, department, team, gender, userID, status, role } = req.body;
+    const file = req.files ? req.files.file : '';
+
+    const result = await userModel.findOne({ userID: userID }).updateMany({
+      $set: {
+        name: name,
+        role: role,
+        status: status,
+        team: team,
+        organization: organization
+      }
+    })
+    console.log(result)
+
+    if (result.ok < 1) {
+      res.status(501).json({
+        message: 'userData update Faild'
+      })
+    }
+    if (file === '') {
+      res.status(200).json({
+        file: false,
+        message: 'User updated success'
+      })
+    }
+    else {
+      file.mv(
+        `${__dirname}/../public/avatar/${file.name}`,
+        async function (err, re) {
+          let avatarURL = "";
+          if (err) {
+            return res.status(500).send({ msg: "Error occured" });
+          }
+          // returing the response with file path and name
+          const update_avatar = await userModel.findOne({ userID: userID }).updateMany({
+            $set: {
+              avatar: SITE_URL + "avatar/" + file.name
+            },
+          });
+
+          console.log("update avatar", update_avatar, SITE_URL + "avatar/" + file.name)
+
+          return res.status(200).send({ file: true, path: SITE_URL + "avatar/" + file.name, message: 'User updated success!' });
+        })
+    }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+
+}
+
+
+
+
+
 exports.postSignup = async (req, res, next) => {
 
   const { userID, password } = req.body;
