@@ -131,18 +131,17 @@ exports.checkUserID = async (req, res, next) => {
 }
 
 exports.importUser = async (req, res, next) => {
+
   const { userData } = req.body
-  const existUser = await userModel.findOne({ userID: 'rkm33' })
+  
   try {
     await userModel.insertMany(userData);
     console.log('Done!');
       res.status(200).json({
           message: "User Data imported successfully!"
       })
-    process.exit();
   } catch(e) {
     console.log(e);
-    process.exit();
   }
 
 
