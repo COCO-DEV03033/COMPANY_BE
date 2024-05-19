@@ -231,8 +231,6 @@ exports.removeUser = async (req, res, next) => {
 
   }
 
-
-
 }
 
 exports.updateUser = async (req, res, next) => {
@@ -245,12 +243,11 @@ exports.updateUser = async (req, res, next) => {
       $set: {
         name: name,
         role: role,
-        status: status,
+        department: department,
         team: team,
         organization: organization
       }
     })
-    console.log(result)
 
     if (result.ok < 1) {
       res.status(501).json({
@@ -292,7 +289,77 @@ exports.updateUser = async (req, res, next) => {
 
 }
 
+exports.approveUser = async (req, res, next) => {
+  try {
 
+    const { userID } = req.params
+    const selectedUser = await userModel.findOne({ userID: userID })
+
+    if (!selectedUser) {
+      res.status(201).send({
+        message: "User with this userID doesn\'t exist"
+      })
+    }
+
+    const updateResult = await userModel.findOne({userID: userID}).updateMany({
+      $set: {
+        status: true
+      }
+    })
+
+    if (updateResult.ok < 1) {
+      res.status(202).send({
+        message: "User status update Faild."
+      })
+    }
+
+    res.status(200).send({
+      message: "User with ID: " + userID + " has been approved."
+    })
+
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+}
+
+exports.rejectUser = async (req, res, next) => {
+  try {
+
+    const { userID } = req.params
+    const selectedUser = await userModel.findOne({ userID: userID })
+
+    if (!selectedUser) {
+      res.status(201).send({
+        message: "User with this userID doesn\'t exist"
+      })
+    }
+
+    const updateResult = await userModel.findOne({userID: userID}).updateMany({
+      $set: {
+        status: false
+      }
+    })
+
+    if (updateResult.ok < 1) {
+      res.status(202).send({
+        message: "User status update Faild."
+      })
+    }
+
+    res.status(200).send({
+      message: "User with ID: " + userID + " has been rejected."
+    })
+
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+}
 
 
 
