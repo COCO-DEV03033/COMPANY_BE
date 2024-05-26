@@ -8,6 +8,7 @@ const cors = require("cors");
 
 // routes
 const authRouter = require("./routes/authRouter");
+const incomeRouter = require("./routes/incomeRouter");
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth/", authRouter);
+app.use("/api/income/", incomeRouter);
 
 app.use((error, req, res, next) => {
   console.log(error);
