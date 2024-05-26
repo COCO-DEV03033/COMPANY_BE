@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
 const calendarModel = require("../models/calendarModel");
-const earningModel = require("../models/earningModel");
+const earningModel = require("../models/IncomeModel");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
@@ -155,55 +155,6 @@ exports.addYearMonth = async (req, res, next) => {
         status: 1,
       })
       await calendar.save()
-      let calendar_id = calendar._id;
-      const allUsers = await userModel.find();
-      for (let user of allUsers) {
-        // const existEarning = await earningModel.findOne({ _id: calendar._id, user_id:user._id}).lean()
-        const existEarning = await earningModel.findOne({ calendar_id: calendar_id, user_id: user._id });
-        if (!existEarning) {
-          const createEarning = new earningModel({
-            user_id: user._id,
-            calendar_id: calendar_id,///
-            plan: 0,
-            day1: 0,
-            day2: 0,
-            day3: 0,
-            day4: 0,
-            day5: 0,
-            day6: 0,
-            day7: 0,
-            day8: 0,
-            day9: 0,
-            day10: 0,
-            day11: 0,
-            day12: 0,
-            day13: 0,
-            day14: 0,
-            day15: 0,
-            day16: 0,
-            day17: 0,
-            day18: 0,
-            day19: 0,
-            day20: 0,
-            day21: 0,
-            day22: 0,
-            day23: 0,
-            day24: 0,
-            day25: 0,
-            day26: 0,
-            day27: 0,
-            day28: 0,
-            day29: 0,
-            day30: 0,
-            day31: 0,
-            day32: 0,
-            day33: 0,
-            day34: 0,
-            day35: 0,
-          })
-          await createEarning.save()
-        }
-      }
       res.status(200).json({
         status_code: 0,
         message: 'Year month was set successfully!',

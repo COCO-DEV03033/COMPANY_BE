@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const EarningSchema = new Schema(
+const IncomeSchema = new Schema(
   {
     id:{
       type: String,
@@ -176,4 +176,4 @@ const EarningSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Earning", EarningSchema);
+module.exports = mongoose.model("Income", IncomeSchema);

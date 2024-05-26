@@ -9,28 +9,24 @@ const CalendarSchema = new Schema(
       require: true
     },
     year: {
-      type: String,
+      type: Number,
       require: false
     },
     month: {
-      type: String,
+      type: Number,
       require: false
     },
     start_date: {
-      type: String,
+      type: Date,
       require: false
     },
     end_date: {
-      type: String,
+      type: Date,
       require: false
     },
     namelist: {
       type: [String],
       require: false
-    },
-    status: {
-      type: Boolean,
-      require: true
     },
     created_at: {
       type: Date,
