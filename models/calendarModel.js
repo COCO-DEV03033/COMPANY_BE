@@ -16,12 +16,12 @@ const CalendarSchema = new Schema(
       type: Number,
       require: false
     },
-    start_date: {
-      type: String,
+    startDate: {
+      type: Date,
       require: false
     },
-    end_date: {
-      type: String,
+    endDate: {
+      type: Date,
       require: false
     },
     namelist: {
