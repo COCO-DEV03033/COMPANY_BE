@@ -12,5 +12,8 @@ router.get("/users", authController.getAllUser);
 router.get("/users/:userID", authController.getUserByID);
 router.delete("/users/:userID", authController.removeUser);
 router.post("/updateUser", authController.updateUser);
+router.put("/usersApprove/:userID", authController.approveUser);
+router.put("/usersReject/:userID", authController.rejectUser);
+router.update
 
 module.exports = router;
