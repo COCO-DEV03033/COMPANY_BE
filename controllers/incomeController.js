@@ -16,7 +16,7 @@ const SITE_URL = "http://localhost:5050/";
 //----------------      Earning-Management      -------------------//
 
 exports.getIncomes = async (req, res, next) => {
-  const { year, month } = req.body;
+  const { year, month, organization } = req.body;
   try {
     const calendar = await calendarModel.findOne({ year: year, month: month });
     if (!calendar) {
@@ -27,7 +27,42 @@ exports.getIncomes = async (req, res, next) => {
     }
     const startDate = calendar.startDate;
     const endDate = calendar.endDate;
-    console.log(startDate, endDate);
+    let incomes = [];
+
+    if (organization == 'all') {
+      const allUsers = await userModel.find();
+      for (let user of allUsers) {
+        let index = 1;
+        let newdata = {
+          "name": user.name,
+          "organization": user.organization,
+          "team": user.team,
+          "plan": 0,
+        }
+        let combinedObj ={...newdata};
+        for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+          let income = await incomeModel.findOne({ date: currentDate, userID: user._id });
+          if (income) {
+            combinedObj[`day${index++}`] = income.cost;
+          } else {
+            combinedObj[`day${index++}`] = 0;
+          }
+
+          // const results = await collection.find({
+          //   createdAt: {
+          //     $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
+          //     $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
+          //   }
+          // }).toArray();
+
+          // console.log(`Results for ${currentDate.toISOString().slice(0, 10)}:`);
+          // console.log(currentDate);
+        }
+        incomes.push(combinedObj);
+
+      }
+    }
+
 
     // const allEarnings = await incomeModel.find({ calendar_id: calendar._id });
     // const earnings = [];
@@ -85,7 +120,7 @@ exports.getIncomes = async (req, res, next) => {
       status_code: 0,
       message: "Get Data Successfully!",
       data: {
-        // earnings: earnings,
+        incomes: incomes,
         dates: calendar.namelist,
       }
     });
@@ -103,12 +138,12 @@ exports.getYearMonths = async (req, res, next) => {
   try {
     const allyearmonths = await calendarModel.find({ year: year });
     if (yearmonths) {
-      for(let yearmonth of allyearmonths) {
-        let newData ={
-          '_id' : yearmonth._id,
-          'yearmonth' : yearmonth.year +'-' + yearmonth.month,
-          'startDate' : convertDateToString(yearmonth.startDate),
-          'endDate' : convertDateToString(yearmonth.endDate),
+      for (let yearmonth of allyearmonths) {
+        let newData = {
+          '_id': yearmonth._id,
+          'yearmonth': yearmonth.year + '-' + yearmonth.month,
+          'startDate': convertDateToString(yearmonth.startDate),
+          'endDate': convertDateToString(yearmonth.endDate),
         }
         yearmonths.push(newData);
       }
@@ -165,12 +200,12 @@ exports.addYearMonth = async (req, res, next) => {
       res.status(200).json({
         status_code: 0,
         message: 'Year month was set successfully!',
-        data :{
-          yearmonth:{
-              '_id' : calendar._id,
-              'yearmonth' : calendar.year +'-' + calendar.month,
-              'startDate' : startDate,
-              'endDate'   : endDate,
+        data: {
+          yearmonth: {
+            '_id': calendar._id,
+            'yearmonth': calendar.year + '-' + calendar.month,
+            'startDate': startDate,
+            'endDate': endDate,
           }
         }
       });
@@ -196,6 +231,9 @@ exports.updateYearMonth = async (req, res, next) => {
   const start = new Date(startDate.replace('-', '/'));
   const end = new Date(endDate.replace('-', '/'));
 
+  const startDate1 = `${year}-${startDate.replace('-', '-')}`;
+  const endDate1 = `${year}-${endDate.replace('-', '-')}`;
+
   // Initialize the date array
   const dates = [];
 
@@ -206,11 +244,11 @@ exports.updateYearMonth = async (req, res, next) => {
   }
 
   try {
-    const updateCalendar = await calendarModel.findOneAndUpdate({ _id: _id}, {
+    const updateCalendar = await calendarModel.findOneAndUpdate({ _id: _id }, {
       year: year,
       month: month,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDate1,
+      endDate: endDate1,
       namelist: dates,
       status: 1,
     });
@@ -243,7 +281,7 @@ function convertDateToString(date) {
 
 exports.deleteYearMonth = async (req, res, next) => {
   const { _id } = req.body;
-  console.log("deleted",_id);
+  console.log("deleted", _id);
   try {
     const result = await calendarModel.findByIdAndDelete(_id);
     if (result) {

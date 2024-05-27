@@ -8,12 +8,12 @@ const IncomeSchema = new Schema(
       type: String,
       require: true
     },
-    user_id: {
+    userID: {
       type: Schema.Types.ObjectId,
       ref: 'users'
     },
     date: {
-      type: String,
+      type: Date,
       require: true
     },
     cost: {
