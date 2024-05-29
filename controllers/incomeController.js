@@ -25,97 +25,31 @@ exports.getIncomes = async (req, res, next) => {
         message: "The data does not exist!",
       });
     }
-    const startDate = calendar.startDate;
-    const endDate = calendar.endDate;
+    let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
     let incomes = [];
-
     if (organization == 'all') {
       const allUsers = await userModel.find();
       for (let user of allUsers) {
         let index = 1;
         let newdata = {
+          "userID": user._id,
           "name": user.name,
           "organization": user.organization,
           "team": user.team,
           "plan": 0,
         }
         let combinedObj ={...newdata};
-        for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
-          let income = await incomeModel.findOne({ date: currentDate, userID: user._id });
+        for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
+          let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user._id });
           if (income) {
             combinedObj[`day${index++}`] = income.cost;
           } else {
             combinedObj[`day${index++}`] = 0;
           }
-
-          // const results = await collection.find({
-          //   createdAt: {
-          //     $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
-          //     $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
-          //   }
-          // }).toArray();
-
-          // console.log(`Results for ${currentDate.toISOString().slice(0, 10)}:`);
-          // console.log(currentDate);
         }
         incomes.push(combinedObj);
-
       }
     }
-
-
-    // const allEarnings = await incomeModel.find({ calendar_id: calendar._id });
-    // const earnings = [];
-    // for (let earning of allEarnings) {
-    //   const user = await userModel.findById(earning.user_id);
-    //   if (user) {
-    //     let newdata = {
-    //       '_id': earning._id,
-    //       "name": user.name,
-    //       "organization": user.organization ?? "3*9",
-    //       "team": user.team ?? 1,
-    //       "plan": earning.plan ?? 0,
-    //       "day1": earning.day1 ?? 0,
-    //       "day2": earning.day2 ?? 0,
-    //       "day3": earning.day3 ?? 0,
-    //       "day4": earning.day4 ?? 0,
-    //       "day5": earning.day5 ?? 0,
-    //       "day6": earning.day6 ?? 0,
-    //       "day7": earning.day7 ?? 0,
-    //       "day8": earning.day8 ?? 0,
-    //       "day9": earning.day9 ?? 0,
-    //       "day10": earning.day10 ?? 0,
-    //       "day11": earning.day11 ?? 0,
-    //       "day12": earning.day12 ?? 0,
-    //       "day13": earning.day13 ?? 0,
-    //       "day14": earning.day14 ?? 0,
-    //       "day15": earning.day15 ?? 0,
-    //       "day16": earning.day16 ?? 0,
-    //       "day17": earning.day17 ?? 0,
-    //       "day18": earning.day18 ?? 0,
-    //       "day19": earning.day19 ?? 0,
-    //       "day20": earning.day20 ?? 0,
-    //       "day21": earning.day21 ?? 0,
-    //       "day22": earning.day22 ?? 0,
-    //       "day23": earning.day23 ?? 0,
-    //       "day24": earning.day24 ?? 0,
-    //       "day25": earning.day25 ?? 0,
-    //       "day26": earning.day26 ?? 0,
-    //       "day27": earning.day27 ?? 0,
-    //       "day28": earning.day28 ?? 0,
-    //       "day29": earning.day29 ?? 0,
-    //       "day30": earning.day30 ?? 0,
-    //       "day31": earning.day31 ?? 0,
-    //       "day32": earning.day32 ?? 0,
-    //       "day33": earning.day33 ?? 0,
-    //       "day34": earning.day34 ?? 0,
-    //       "day35": earning.day35 ?? 0
-
-    //     }
-    //     earnings.push(newdata);
-    //   }
-    // }
-
     res.status(200).json({
       status_code: 0,
       message: "Get Data Successfully!",
@@ -272,13 +206,6 @@ exports.updateYearMonth = async (req, res, next) => {
   }
 }
 
-function convertDateToString(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${month}-${day}`;
-}
-
 exports.deleteYearMonth = async (req, res, next) => {
   const { _id } = req.body;
   console.log("deleted", _id);
@@ -323,5 +250,20 @@ exports.updateIncome = async (req, res, next) => {
 }
 
 exports.getUserInfo = (req, res, next) => { };
+
+function convertDateToString(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}-${day}`;
+}
+
+function getTotalDatesBetween(startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+  return totalDays;
+}
 
 
