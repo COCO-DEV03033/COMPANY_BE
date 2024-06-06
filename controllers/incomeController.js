@@ -254,10 +254,10 @@ exports.updateIncome = async (req, res, next) => {
             cost: income[`day${index}`],
           });
           if (existincome) {
-            console.log(`existincome, day${index}`, '--->', income[`day${index}`]);
+            console.log(`existincome update, day${index}`, '--->', income[`day${index}`]);
           } else {
             if (income[`day${index}`]&&(income[`day${index}`] != 0)) {
-              console.log(`day${index}`, '--->', income[`day${index}`]);
+              console.log(`day${index}`, '---> add', income[`day${index}`]);
               const newincome = new incomeModel({
                 userID: income.userID,
                 date: date,
