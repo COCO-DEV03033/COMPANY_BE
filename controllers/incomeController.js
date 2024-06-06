@@ -22,7 +22,7 @@ exports.getIncomes = async (req, res, next) => {
     if (!calendar) {
       return res.status(200).json({
         status_code: 1,
-        message: "The data does not exist!",
+        message: "The calendar data does not exist!",
       });
     }
     let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
@@ -38,7 +38,7 @@ exports.getIncomes = async (req, res, next) => {
           "team": user.team,
           "plan": 0,
         }
-        let combinedObj ={...newdata};
+        let combinedObj = { ...newdata };
         for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
           let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user._id });
           if (income) {
@@ -230,16 +230,54 @@ exports.deleteYearMonth = async (req, res, next) => {
   }
 }
 exports.updateIncome = async (req, res, next) => {
-  const earnings = req.body;
-  const updateEarnings = [];
+  const { incomes, year, month } = req.body;
+  const updateIncomes = [];
   try {
-    for (let earning of earnings) {
-      existEarning = await incomeModel.findOneAndUpdate({ _id: earning._id }, earning);
-      updateEarnings.push(existEarning);
+    const calendar = await calendarModel.findOne({ year: year, month: month });
+    if (!calendar) {
+      return res.status(200).json({
+        status_code: 1,
+        message: "The calendar data does not exist!",
+      });
+    }
+    let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
+    console.log('totaldays', totaldays);
+    let combinedObj = {};
+    for (let income of incomes) {
+      let index = 0;
+      const user = await userModel.findById(income.userID);
+      if (user) {
+        for (let currentDate = 0; currentDate < totaldays; currentDate++) {
+          index += 1;
+          let date = new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate);
+          let existincome = await incomeModel.findOneAndUpdate({ date: date, userID: user._id } ,{
+            cost: income[`day${index}`],
+          });
+          if (existincome) {
+            console.log(`existincome, day${index}`, '--->', income[`day${index}`]);
+          } else {
+            if (income[`day${index}`]&&(income[`day${index}`] != 0)) {
+              console.log(`day${index}`, '--->', income[`day${index}`]);
+              const newincome = new incomeModel({
+                userID: income.userID,
+                date: date,
+                cost: income[`day${index}`],
+              });
+              await newincome.save();
+            }
+          }
+        }
+      } else {
+        // The user doesn't exist!!!
+      }
     }
     res.status(200).json({
       status_code: 0,
-      message: 'updated successfully!'
+      message: 'updated successfully!',
+      data: {
+        incomes: combinedObj,
+        dates: calendar.namelist,
+      }
     });
   } catch (error) {
     if (!error.statusCode) {

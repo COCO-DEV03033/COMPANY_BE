@@ -45,7 +45,11 @@ app.use((error, req, res, next) => {
 const MONGOOSE_URI = process.env.MONGOOSE_URI;
 
 mongoose
-  .connect(MONGOOSE_URI)
+  .connect(MONGOOSE_URI,{
+    useUnifiedTopology: true,
+    useNewUrlParser: true, 
+    useFindAndModify: false
+  })
   .then((result) => {
     app.listen(process.env.PORT || 5050);
   })
