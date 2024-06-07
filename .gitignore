@@ -1,2 +1,4 @@
 node_modules 
 "sendgrid.env" 
+.git_local/
+.git_remote/
