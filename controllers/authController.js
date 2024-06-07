@@ -1,6 +1,5 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
-const planModel = require("../models/planModel")
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
