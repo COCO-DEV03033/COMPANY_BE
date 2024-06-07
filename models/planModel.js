@@ -1,28 +1,39 @@
-const { isInteger } = require("core-js/core/number");
 const express = require("express");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const PlanSchema = new Schema(
   {
-    
-    amount: {
-      type: Number,
+    id: {
+      type: String,
       require: true
     },
-    month: {
-        type: Number,
-        require: true
+    userID: {
+      type: Schema.Types.ObjectId,
+      ref: 'users'
     },
     year: {
-        type: Number,
-        require: true
+      type: Number,
+      require: false
     },
-    users: {
-        type: Schema.Types.ObjectId,
-        ref: 'users'
-    }
-  }
+    month: {
+      type: Number,
+      require: false
+    },
+    amount: {
+      type: Number,
+      require: false
+    },
+    created_at: {
+      type: Date,
+      require: false,
+    },
+    updated_at: {
+      type: Date,
+      require: false,
+    },
+  },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Plan", PlanSchema);

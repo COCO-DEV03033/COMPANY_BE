@@ -9,6 +9,7 @@ const cors = require("cors");
 // routes
 const authRouter = require("./routes/authRouter");
 const incomeRouter = require("./routes/incomeRouter");
+const planRouter = require("./routes/planRouter");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth/", authRouter);
 app.use("/api/income/", incomeRouter);
+app.use("/api/plan/", planRouter);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -45,7 +47,11 @@ app.use((error, req, res, next) => {
 const MONGOOSE_URI = process.env.MONGOOSE_URI;
 
 mongoose
-  .connect(MONGOOSE_URI)
+  .connect(MONGOOSE_URI,{
+    useUnifiedTopology: true,
+    useNewUrlParser: true, 
+    useFindAndModify: false
+  })
   .then((result) => {
     app.listen(process.env.PORT || 5050);
   })
