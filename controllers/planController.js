@@ -13,118 +13,7 @@ require("dotenv").config({ path: ".env" });
 const SITE_URL = "http://localhost:5050/";
 
 
-//----------------      Earning-Management      -------------------//
-
-exports.getIncomes = async (req, res, next) => {
-  const { year, month, organization } = req.body;
-  try {
-    const calendar = await calendarModel.findOne({ year: year, month: month });
-    if (!calendar) {
-      return res.status(200).json({
-        status_code: 1,
-        message: "The calendar data does not exist!",
-      });
-    }
-    let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
-    let incomes = [];
-    if (organization == 'all') {
-      const allUsers = await userModel.find();
-      for (let user of allUsers) {
-        let index = 1;
-        let newdata = {
-          "userID": user._id,
-          "name": user.name,
-          "organization": user.organization,
-          "team": user.team,
-          "plan": 0,
-        }
-        let combinedObj = { ...newdata };
-        for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
-          let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user._id });
-          if (income) {
-            combinedObj[`day${index++}`] = income.cost;
-          } else {
-            combinedObj[`day${index++}`] = 0;
-          }
-        }
-        incomes.push(combinedObj);
-      }
-    }
-    res.status(200).json({
-      status_code: 0,
-      message: "Get Data Successfully!",
-      data: {
-        incomes: incomes,
-        dates: calendar.namelist,
-      }
-    });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
-};
-
-exports.updateIncome = async (req, res, next) => {
-  const { incomes, year, month } = req.body;
-  const updateIncomes = [];
-  try {
-    const calendar = await calendarModel.findOne({ year: year, month: month });
-    if (!calendar) {
-      return res.status(200).json({
-        status_code: 1,
-        message: "The calendar data does not exist!",
-      });
-    }
-    let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
-    console.log('totaldays', totaldays);
-    let combinedObj = {};
-    for (let income of incomes) {
-      let index = 0;
-      const user = await userModel.findById(income.userID);
-      if (user) {
-        for (let currentDate = 0; currentDate < totaldays; currentDate++) {
-          index += 1;
-          let date = new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate);
-          let existincome = await incomeModel.findOneAndUpdate({ date: date, userID: user._id } ,{
-            cost: income[`day${index}`],
-          });
-          if (existincome) {
-            console.log(`existincome update, day${index}`, '--->', income[`day${index}`]);
-          } else {
-            if (income[`day${index}`]&&(income[`day${index}`] != 0)) {
-              console.log(`day${index}`, '---> add', income[`day${index}`]);
-              const newincome = new incomeModel({
-                userID: income.userID,
-                date: date,
-                cost: income[`day${index}`],
-              });
-              await newincome.save();
-            }
-          }
-        }
-      } else {
-        // The user doesn't exist!!!
-      }
-    }
-    res.status(200).json({
-      status_code: 0,
-      message: 'updated successfully!',
-      data: {
-        incomes: combinedObj,
-        dates: calendar.namelist,
-      }
-    });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
-}
-
-exports.getYearMonths = async (req, res, next) => {
+exports.getPlans = async (req, res, next) => {
   const { year, month } = req.body;
   const yearmonths = [];
   try {
@@ -160,7 +49,7 @@ exports.getYearMonths = async (req, res, next) => {
   }
 };
 
-exports.storeYearMonth = async (req, res, next) => {
+exports.addPlan = async (req, res, next) => {
 
   const { startDate, endDate, year, month } = req.body;
   // Parse the start and end dates
@@ -215,7 +104,7 @@ exports.storeYearMonth = async (req, res, next) => {
   }
 }
 
-exports.updateYearMonth = async (req, res, next) => {
+exports.updatePlan = async (req, res, next) => {
 
   const { _id, startDate, endDate, year, month } = req.body;
 
@@ -264,7 +153,7 @@ exports.updateYearMonth = async (req, res, next) => {
   }
 }
 
-exports.deleteYearMonth = async (req, res, next) => {
+exports.deletePlan = async (req, res, next) => {
   const { _id } = req.body;
   console.log("deleted", _id);
   try {

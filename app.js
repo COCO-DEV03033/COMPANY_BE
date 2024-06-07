@@ -9,6 +9,7 @@ const cors = require("cors");
 // routes
 const authRouter = require("./routes/authRouter");
 const incomeRouter = require("./routes/incomeRouter");
+const planRouter = require("./routes/planRouter");
 
 const app = express();
 

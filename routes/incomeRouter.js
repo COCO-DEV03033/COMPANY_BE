@@ -9,7 +9,7 @@ router.post("/update", incomeController.updateIncome);
 // router.delete("/users/:userID", incomeController.removeUser);
 
 router.post("/getYearMonths", incomeController.getYearMonths);
-router.post("/addYearMonth", incomeController.addYearMonth);
+router.post("/addYearMonth", incomeController.storeYearMonth);
 router.post("/updateYearMonth", incomeController.updateYearMonth);
 router.post("/deleteYearMonth", incomeController.deleteYearMonth);
 
