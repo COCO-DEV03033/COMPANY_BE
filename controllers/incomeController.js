@@ -78,7 +78,6 @@ exports.updateIncome = async (req, res, next) => {
       });
     }
     let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
-    console.log('totaldays', totaldays);
     let combinedObj = {};
     for (let income of incomes) {
       let index = 0;
@@ -191,7 +190,7 @@ exports.storeYearMonth = async (req, res, next) => {
       await calendar.save()
       res.status(200).json({
         status_code: 0,
-        message: 'Year month was set successfully!',
+        message: 'Year month was created successfully!',
         data: {
           yearmonth: {
             '_id': calendar._id,

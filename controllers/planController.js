@@ -1,10 +1,6 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
-const calendarModel = require("../models/calendarModel");
-const incomeModel = require("../models/IncomeModel");
-const jwt = require("jsonwebtoken");
-const fileUpload = require("express-fileupload");
-const { jwtDecode } = require("jwt-decode");
+const planModel = require("../models/planModel");
 
 const mongoose = require("mongoose");
 
@@ -15,24 +11,40 @@ const SITE_URL = "http://localhost:5050/";
 
 exports.getPlans = async (req, res, next) => {
   const { year, month } = req.body;
-  const yearmonths = [];
+  const plans = [];
   try {
-    const allyearmonths = await calendarModel.find({ year: year });
-    if (yearmonths) {
-      for (let yearmonth of allyearmonths) {
+    const allplans = await planModel.find({ year: year, month:month });
+    if (plans) {
+      for (let plan of allplans) {
+      let userInfo = {};
+      await userModel.findById(plan.userID, function (err, docs) {
+          if (err){
+              console.log(err);
+          }
+          else{
+              userInfo = docs;
+              // console.log("Result : ", docs);
+          }
+      });
+
+        console.log('plad->', userInfo);
+
         let newData = {
-          '_id': yearmonth._id,
-          'yearmonth': yearmonth.year + '-' + yearmonth.month,
-          'startDate': convertDateToString(yearmonth.startDate),
-          'endDate': convertDateToString(yearmonth.endDate),
+          '_id': plan._id,
+          'name': userInfo.name,
+          'organization': userInfo.organization,
+          'team': userInfo.team,
+          'year': plan.year,
+          'month': plan.month,
+          'amount': plan.amount,
         }
-        yearmonths.push(newData);
+        plans.push(newData);
       }
       res.status(200).json({
         status_code: 0,
         message: "Get Data Successfully!",
         data: {
-          yearmonths: yearmonths
+          plans: plans
         }
       });
     } else {
@@ -51,42 +63,27 @@ exports.getPlans = async (req, res, next) => {
 
 exports.addPlan = async (req, res, next) => {
 
-  const { startDate, endDate, year, month } = req.body;
-  // Parse the start and end dates
-  const start = new Date(startDate.replace('-', '/'));
-  const end = new Date(endDate.replace('-', '/'));
-
-  const startDate1 = `${year}-${startDate.replace('-', '-')}`;
-  const endDate1 = `${year}-${endDate.replace('-', '-')}`;
-  // Initialize the date array
-  const dates = [];
-  for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    dates.push(`${month}/${day}`);
-  }
-
+  const { year, month, amount, userID } = req.body;
   try {
-    const existCalendar = await calendarModel.findOne({ year: year, month: month });
-    if (!existCalendar) {
-      const calendar = new calendarModel({
+    const existPlan = await planModel.findOne({ year: year, month: month });
+    if (!existPlan) {
+      const newPlan = new planModel({
         year: year,
         month: month,
-        startDate: startDate1,
-        endDate: endDate1,
-        namelist: dates,
-        status: 1,
+        userID:userID,
+        amount:amount,
       })
-      await calendar.save()
+      await newPlan.save()
       res.status(200).json({
         status_code: 0,
-        message: 'Year month was set successfully!',
+        message: 'Plan was created successfully!',
         data: {
-          yearmonth: {
-            '_id': calendar._id,
-            'yearmonth': calendar.year + '-' + calendar.month,
-            'startDate': startDate,
-            'endDate': endDate,
+          plan: {
+            '_id': newPlan._id,
+            'year': newPlan.year,
+            'month': newPlan.month,
+            'amount': newPlan.amount,
+            'userID': newPlan.userID,
           }
         }
       });
@@ -106,38 +103,19 @@ exports.addPlan = async (req, res, next) => {
 
 exports.updatePlan = async (req, res, next) => {
 
-  const { _id, startDate, endDate, year, month } = req.body;
-
-  // Parse the start and end dates
-  const start = new Date(startDate.replace('-', '/'));
-  const end = new Date(endDate.replace('-', '/'));
-
-  const startDate1 = `${year}-${startDate.replace('-', '-')}`;
-  const endDate1 = `${year}-${endDate.replace('-', '-')}`;
-
-  // Initialize the date array
-  const dates = [];
-
-  for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    dates.push(`${month}/${day}`);
-  }
+  const { _id, year, month, amount } = req.body;
 
   try {
-    const updateCalendar = await calendarModel.findOneAndUpdate({ _id: _id }, {
-      year: year,
-      month: month,
-      startDate: startDate1,
-      endDate: endDate1,
-      namelist: dates,
-      status: 1,
+    const updatePlan = await planModel.findOneAndUpdate({ _id: _id }, {
+      // year: year,
+      // month: month,
+      amount: amount,
     });
 
-    if (updateCalendar) {
+    if (updatePlan) {
       res.status(200).json({
         status_code: 0,
-        message: 'Year month was updated successfully!',
+        message: 'selected Plan was updated successfully!',
       });
     } else {
       res.status(200).json({
@@ -157,11 +135,11 @@ exports.deletePlan = async (req, res, next) => {
   const { _id } = req.body;
   console.log("deleted", _id);
   try {
-    const result = await calendarModel.findByIdAndDelete(_id);
+    const result = await planModel.findByIdAndDelete(_id);
     if (result) {
       res.status(200).json({
         status_code: 0,
-        message: 'Year month was deleted successfully!',
+        message: 'selected plan was deleted successfully!',
       });
     } else {
       res.status(200).json({
@@ -177,8 +155,6 @@ exports.deletePlan = async (req, res, next) => {
   }
 }
 
-
-exports.getUserInfo = (req, res, next) => { };
 
 function convertDateToString(date) {
   const year = date.getFullYear();

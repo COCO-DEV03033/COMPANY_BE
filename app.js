@@ -32,6 +32,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth/", authRouter);
 app.use("/api/income/", incomeRouter);
+app.use("/api/plan/", planRouter);
 
 app.use((error, req, res, next) => {
   console.log(error);
