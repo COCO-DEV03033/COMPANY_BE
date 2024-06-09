@@ -27,16 +27,12 @@ exports.getPlans = async (req, res, next) => {
           }
       });
 
-        console.log('plad->', userInfo);
-
         let newData = {
           '_id': plan._id,
-          'name': userInfo.name,
-          'organization': userInfo.organization,
-          'team': userInfo.team,
           'year': plan.year,
           'month': plan.month,
           'amount': plan.amount,
+          'user' :userInfo
         }
         plans.push(newData);
       }
