@@ -61,7 +61,7 @@ exports.addPlan = async (req, res, next) => {
 
   const { year, month, amount, userID } = req.body;
   try {
-    const existPlan = await planModel.findOne({ year: year, month: month });
+    const existPlan = await planModel.findOne({ userID:userID, year: year, month: month });
     if (!existPlan) {
       const newPlan = new planModel({
         year: year,
