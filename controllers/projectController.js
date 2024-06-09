@@ -1,46 +1,41 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
-const planModel = require("../models/planModel");
+const projectModel = require("../models/projectModel");
 
 const mongoose = require("mongoose");
 
 require("dotenv").config({ path: ".env" });
 
-const SITE_URL = "http://localhost:5050/";
-
-
-exports.getPlans = async (req, res, next) => {
-  const { year, month } = req.body;
-  const plans = [];
+exports.getProjects = async (req, res, next) => {
+  // const { year, month } = req.body;
+  const projects = [];
   try {
-    const allplans = await planModel.find({ year: year, month:month });
-    if (plans) {
-      for (let plan of allplans) {
+    const allprojects = await projectModel.find();
+    if (projects) {
+      for (let project of allprojects) {
       let userInfo = {};
-      await userModel.findById(plan.userID, function (err, docs) {
+      await userModel.findById(project.userID, function (err, docs) {
           if (err){
               console.log(err);
           }
           else{
               userInfo = docs;
-              // console.log("Result : ", docs);
           }
       });
-
         let newData = {
-          '_id': plan._id,
-          'year': plan.year,
-          'month': plan.month,
-          'amount': plan.amount,
-          'user' :userInfo
+          '_id': project._id,
+          'name': userInfo.name,
+          'organization': userInfo.organization,
+          'team': userInfo.team,
+          'title': project.title,
         }
-        plans.push(newData);
+        projects.push(newData);
       }
       res.status(200).json({
         status_code: 0,
         message: "Get Data Successfully!",
         data: {
-          plans: plans
+          projects: projects
         }
       });
     } else {
@@ -57,29 +52,25 @@ exports.getPlans = async (req, res, next) => {
   }
 };
 
-exports.addPlan = async (req, res, next) => {
+exports.addProject = async (req, res, next) => {
 
-  const { year, month, amount, userID } = req.body;
+  const { title, userID } = req.body;
   try {
-    const existPlan = await planModel.findOne({ year: year, month: month });
-    if (!existPlan) {
-      const newPlan = new planModel({
-        year: year,
-        month: month,
+    const existproject = await projectModel.findOne({ title:title });
+    if (!existproject) {
+      const newproject = new projectModel({
+        title: title,
         userID:userID,
-        amount:amount,
       })
-      await newPlan.save()
+      await newproject.save()
       res.status(200).json({
         status_code: 0,
-        message: 'Plan was created successfully!',
+        message: 'project was created successfully!',
         data: {
-          plan: {
-            '_id': newPlan._id,
-            'year': newPlan.year,
-            'month': newPlan.month,
-            'amount': newPlan.amount,
-            'userID': newPlan.userID,
+          project: {
+            '_id': newproject._id,
+            'title': newproject.title,
+            'userID': newproject.userID,
           }
         }
       });
@@ -97,21 +88,47 @@ exports.addPlan = async (req, res, next) => {
   }
 }
 
-exports.updatePlan = async (req, res, next) => {
+exports.getProjectByID = async (req, res, next) => {
+
+  const { ID } = req.params
+
+  try {
+
+    const existProject = await projectModel.findOne({ _id: ID }).lean()
+
+    if (!existProject) {
+      const error = new Error("Project with this ID not found!");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    res.status(200).json({
+      existProject
+    });
+
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+exports.updateProject = async (req, res, next) => {
 
   const { _id, year, month, amount } = req.body;
 
   try {
-    const updatePlan = await planModel.findOneAndUpdate({ _id: _id }, {
+    const updateproject = await projectModel.findOneAndUpdate({ _id: _id }, {
       // year: year,
       // month: month,
       amount: amount,
     });
 
-    if (updatePlan) {
+    if (updateproject) {
       res.status(200).json({
         status_code: 0,
-        message: 'selected Plan was updated successfully!',
+        message: 'selected project was updated successfully!',
       });
     } else {
       res.status(200).json({
@@ -127,15 +144,15 @@ exports.updatePlan = async (req, res, next) => {
   }
 }
 
-exports.deletePlan = async (req, res, next) => {
+exports.deleteProject = async (req, res, next) => {
   const { _id } = req.body;
   console.log("deleted", _id);
   try {
-    const result = await planModel.findByIdAndDelete(_id);
+    const result = await projectModel.findByIdAndDelete(_id);
     if (result) {
       res.status(200).json({
         status_code: 0,
-        message: 'selected plan was deleted successfully!',
+        message: 'selected project was deleted successfully!',
       });
     } else {
       res.status(200).json({
