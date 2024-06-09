@@ -129,9 +129,11 @@ exports.getYearMonths = async (req, res, next) => {
   try {
     const allyearmonths = await calendarModel.find({ year: year });
     if (yearmonths) {
+      let index = 1;
       for (let yearmonth of allyearmonths) {
         let newData = {
           '_id': yearmonth._id,
+          'index':index++,
           'yearmonth': yearmonth.year + '-' + yearmonth.month,
           'startDate': convertDateToString(yearmonth.startDate),
           'endDate': convertDateToString(yearmonth.endDate),
