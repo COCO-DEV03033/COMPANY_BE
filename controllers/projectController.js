@@ -24,10 +24,16 @@ exports.getProjects = async (req, res, next) => {
       });
         let newData = {
           '_id': project._id,
-          'name': userInfo.name,
-          'organization': userInfo.organization,
-          'team': userInfo.team,
           'title': project.title,
+          'plan': 100,
+          'income': 100,
+          'devField': 'Dev Field',
+          'cost': 100,
+          'totalCost': 120,
+          'note': "Note",
+          'username': userInfo.name,
+          'company': userInfo.organization,
+          'team': userInfo.team,
         }
         projects.push(newData);
       }
