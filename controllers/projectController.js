@@ -11,7 +11,7 @@ exports.getProjects = async (req, res, next) => {
   const projects = [];
   try {
     const allprojects = await projectModel.find();
-    if (projects) {
+    if (allprojects) {
       for (let project of allprojects) {
       let userInfo = {};
       await userModel.findById(project.userID, function (err, docs) {
