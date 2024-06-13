@@ -1,7 +1,9 @@
-exports.teams = ['1', '2', '3', '4', '5'];
-exports.offices = ['1', '2', '3', '4', '5'];
+exports.teams = [1,2,3,4,5];
+exports.offices = [1,2,3,4,5];
 exports.companies = ['5*4', '3*9', '8*2', 'AI', '7*9'];
 exports.roles = ["superAdmin", "companyboss", "officeboss", "teamboss", "member"];
+exports.devFields = ["Web", "Mobile", "Architectural"];
+exports.skills = ["Web", "Mobile", "Architectural"];
 const SITE_URL = process.env.SITE_URL;
 
 exports.superadmin =
