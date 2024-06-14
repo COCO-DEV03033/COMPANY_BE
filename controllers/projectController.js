@@ -18,7 +18,7 @@ exports.getProjects = async (req, res, next) => {
       if(projects.length){
           for (let project of allprojects){
               let newData = {
-                'id': project.id,
+                'id': project._id,
                 'title': project.title,
                 'plan': 100,
                 'income': 100,
@@ -32,6 +32,7 @@ exports.getProjects = async (req, res, next) => {
         }
         projects.push({
           user:{
+            id:user._id,
             name:user.name,
             company:user.organization,
             team:user.team,
