@@ -27,16 +27,12 @@ exports.getPlans = async (req, res, next) => {
           }
       });
 
-        console.log('plad->', userInfo);
-
         let newData = {
           '_id': plan._id,
-          'name': userInfo.name,
-          'organization': userInfo.organization,
-          'team': userInfo.team,
           'year': plan.year,
           'month': plan.month,
           'amount': plan.amount,
+          'user' :userInfo
         }
         plans.push(newData);
       }
@@ -65,7 +61,7 @@ exports.addPlan = async (req, res, next) => {
 
   const { year, month, amount, userID } = req.body;
   try {
-    const existPlan = await planModel.findOne({ year: year, month: month });
+    const existPlan = await planModel.findOne({ userID:userID, year: year, month: month });
     if (!existPlan) {
       const newPlan = new planModel({
         year: year,

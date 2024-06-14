@@ -10,6 +10,7 @@ const cors = require("cors");
 const authRouter = require("./routes/authRouter");
 const incomeRouter = require("./routes/incomeRouter");
 const planRouter = require("./routes/planRouter");
+const projectRouter = require("./routes/projectRouter");
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 app.use("/api/auth/", authRouter);
 app.use("/api/income/", incomeRouter);
 app.use("/api/plan/", planRouter);
+app.use("/api/project/", projectRouter);
 
 app.use((error, req, res, next) => {
   console.log(error);
