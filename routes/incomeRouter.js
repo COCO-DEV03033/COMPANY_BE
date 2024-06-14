@@ -13,4 +13,7 @@ router.post("/addYearMonth", incomeController.storeYearMonth);
 router.post("/updateYearMonth", incomeController.updateYearMonth);
 router.post("/deleteYearMonth", incomeController.deleteYearMonth);
 
+
+router.post("/overView", incomeController.getOverViews);
+
 module.exports = router;

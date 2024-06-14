@@ -4,6 +4,8 @@ exports.companies = ['5*4', '3*9', '8*2', 'AI', '7*9'];
 exports.roles = ["superAdmin", "companyboss", "officeboss", "teamboss", "member"];
 exports.devFields = ["Web", "Mobile", "Architectural"];
 exports.skills = ["Web", "Mobile", "Architectural"];
+exports.themeColors = ['#7367F0', '#28C76F', '#EA5455', '#FF9F43', '#1E1E1E'];
+
 const SITE_URL = process.env.SITE_URL;
 
 exports.superadmin =
@@ -24,13 +26,13 @@ exports.superadmin =
 
 exports.users =[
     {
-        userID: 'sgi',
+        userID: 'user1',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'So Gyong IL',
+        name: 'User 1',
         organization: '3*9',
         department: 'Manage',
         team: '1',
@@ -39,13 +41,13 @@ exports.users =[
     },
    
     {
-        userID: 'kyh',
+        userID: 'user2',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Kim Yu Hyon',
+        name: 'User 2',
         organization: '3*9',
         department: 'Manage',
         team: '1',
@@ -53,13 +55,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'rcg',
+        userID: 'user3',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Lee Chae Gun',
+        name: 'User 3',
         organization: '3*9',
         department: 'Manage',
         team: '1',
@@ -67,13 +69,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'sh',
+        userID: 'user4',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Song Hyon',
+        name: 'User 4',
         organization: '3*9',
         department: 'Manage',
         team: '1',
@@ -81,13 +83,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'jgi33',
+        userID: 'user5',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'JangGyongIl',
+        name: 'User 5',
         organization: '3*9',
         department: 'Manage',
         team: '5',
@@ -95,13 +97,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'lgm35',
+        userID: 'user6',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'LeeGwangMyong',
+        name: 'User 6',
         organization: '3*9',
         department: 'Manage',
         team: '5',
@@ -109,13 +111,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'psh',
+        userID: 'user7',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'PakSinHyok',
+        name: 'User 7',
         organization: '3*9',
         department: 'Manage',
         team: '5',
@@ -123,13 +125,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'shu',
+        userID: 'user8',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'So Hyon Ung',
+        name: 'User 8',
         organization: '3*9',
         department: 'Manage',
         team: '5',
@@ -137,13 +139,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'kki',
+        userID: 'user9',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Kim Kyong Il',
+        name: 'User 9',
         organization: '3*9',
         department: 'Manage',
         team: '5',
@@ -153,13 +155,13 @@ exports.users =[
     
     // 5*4
     {
-        userID: 'ppj',
+        userID: 'user10',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Pak Gyong Jin',
+        name: 'User 10',
         organization: '5*4',
         department: 'Manage',
         team: '1',
@@ -167,13 +169,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'myh',
+        userID: 'user11',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Mun Yu Hyok',
+        name: 'User 11',
         organization: '5*4',
         department: 'Manage',
         team: '1',
@@ -181,13 +183,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'kcm',
+        userID: 'user12',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Kim Chol Min',
+        name: 'User 12',
         organization: '5*4',
         department: 'Manage',
         team: '1',
@@ -195,13 +197,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'lym',
+        userID: 'user13',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Lyu Yong Min',
+        name: 'User 13',
         organization: '5*4',
         department: 'Manage',
         team: '1',
@@ -211,13 +213,13 @@ exports.users =[
     
     
     {
-        userID: 'jmc',
+        userID: 'user14',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Jong Myong Chol',
+        name: 'User 14',
         organization: '5*4',
         department: 'Manage',
         team: '2',
@@ -225,13 +227,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'jsb',
+        userID: 'user15',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Jang Su Bong',
+        name: 'User 15',
         organization: '5*4',
         department: 'Manage',
         team: '2',
@@ -239,13 +241,13 @@ exports.users =[
         age: 100
     },
     {
-        userID: 'pgj',
+        userID: 'user16',
         password: '123123',
         role: 'member',
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'Pak Gyong Jin',
+        name: 'User 16',
         organization: '5*4',
         department: 'Manage',
         team: '2',
