@@ -10,32 +10,40 @@ exports.getProjects = async (req, res, next) => {
   // const { year, month } = req.body;
   const projects = [];
   try {
-    const allprojects = await projectModel.find();
-    if (projects) {
-      for (let project of allprojects) {
-      let userInfo = {};
-      await userModel.findById(project.userID, function (err, docs) {
-          if (err){
-              console.log(err);
+    const allusers = await userModel.find();
+    if (allusers) {
+      for (let user of allusers) {
+      const datas = [];
+      let allprojects = await projectModel.find({userID:user._id});
+      if(projects.length){
+          for (let project of allprojects){
+              let newData = {
+                'id': project.id,
+                'title': project.title,
+                'plan': 100,
+                'income': 100,
+                'devField': 'Dev Field',
+                'cost': 100,
+                'totalCost': 120,
+                'note': "Note",
+              }
+              datas.push(newData);
           }
-          else{
-              userInfo = docs;
-          }
-      });
-        let newData = {
-          '_id': project._id,
-          'name': userInfo.name,
-          'organization': userInfo.organization,
-          'team': userInfo.team,
-          'title': project.title,
         }
-        projects.push(newData);
+        projects.push({
+          user:{
+            name:user.name,
+            company:user.organization,
+            team:user.team,
+          },
+          project:datas
+        });
       }
       res.status(200).json({
         status_code: 0,
         message: "Get Data Successfully!",
         data: {
-          projects: projects
+          projects
         }
       });
     } else {
@@ -68,7 +76,7 @@ exports.addProject = async (req, res, next) => {
         message: 'project was created successfully!',
         data: {
           project: {
-            '_id': newproject._id,
+            'id': newproject.id,
             'title': newproject.title,
             'userID': newproject.userID,
           }
@@ -77,7 +85,7 @@ exports.addProject = async (req, res, next) => {
     } else {
       res.status(200).json({
         status_code: 1,
-        message: 'Year month was already exist!'
+        message: 'The project was already exist!'
       });
     }
   } catch (error) {
