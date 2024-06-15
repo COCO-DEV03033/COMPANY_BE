@@ -5,25 +5,11 @@ const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
 
 const mongoose = require("mongoose");
+const { superAdminInformation, sampleUsers } = require("../config/constants");
 
 require("dotenv").config({ path: ".env" });
 
 const SITE_URL = "http://localhost:5050/";
-
-const superAdminInformation = {
-  userID: 'superAdmin0303',
-  password: 'superAdmin',
-  role: 'superAdmin',
-  status: true,
-  dob: '2024-05-07T07:00:00.000Z',
-  gender: 'male',
-  name: 'Super Admin',
-  organization: '7*9',
-  department: 'Manage',
-  team: '',
-  avatar: SITE_URL + "/avatar/avatar.jpg",
-  age: 100
-}
 
 registerSuperAdmin = async (data) => {
 
@@ -63,6 +49,46 @@ registerSuperAdmin = async (data) => {
     }
     next(error);
   }
+}
+
+registerUsers = async (users) => {
+
+  for(let user of users) {
+    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role } = user;
+  
+    try {
+      const existUser = await userModel.findOne({ userID: userID })
+      if (existUser) {
+        console.log('The User Already Registered!')
+        return
+      }
+      else {
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const user = new userModel({
+          userID: userID,
+          password: hashedPassword,
+          role: role,
+          status: true,
+          dob: dob,
+          gender: gender,
+          name: name,
+          organization: organization,
+          department: department,
+          team: team,
+          avatar: avatar,
+          age: age
+        })
+        await user.save()
+      }
+  
+    } catch (error) {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+    }
+  }
+  console.log("Sample Users Registered")
+
 }
 
 exports.register = async (req, res, next) => {
@@ -629,3 +655,4 @@ exports.getUserInfo = (req, res, next) => { };
 
 
 registerSuperAdmin(superAdminInformation)
+registerUsers(sampleUsers)
