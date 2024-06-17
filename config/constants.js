@@ -1,14 +1,15 @@
-exports.teams = [1,2,3,4,5];
-exports.offices = [1,2,3,4,5];
+exports.teams = [1, 2, 3, 4, 5];
+exports.offices = [1, 2, 3, 4, 5];
 exports.companies = ['5*4', '3*9', '8*2', 'AI', '7*9'];
 exports.roles = ["superAdmin", "companyboss", "officeboss", "teamboss", "member"];
 exports.devFields = ["Web", "Mobile", "Architectural"];
 exports.skills = ["Web", "Mobile", "Architectural"];
 exports.themeColors = ['#7367F0', '#28C76F', '#EA5455', '#FF9F43', '#1E1E1E'];
 
-const SITE_URL = process.env.SITE_URL;
 
-exports.superadmin =
+const SITE_URL = "http://localhost:5050";
+
+exports.superAdminInformation =
 {
     userID: 'superAdmin0303',
     password: 'superAdmin',
@@ -20,11 +21,12 @@ exports.superadmin =
     organization: '7*9',
     department: 'Manage',
     team: '',
-    avatar: SITE_URL + "/avatar/avatar.jpg",
+    avatar: SITE_URL + "/avatar/avatar.png",
     age: 100
+
 };
 
-exports.users =[
+exports.sampleUsers = [
     {
         userID: 'user1',
         password: '123123',
@@ -32,14 +34,24 @@ exports.users =[
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'User 1',
+        name: 'SHU',
         organization: '3*9',
         department: 'Manage',
-        team: '0',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        team: '1',
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
+
+
     },
-   
+
     {
         userID: 'user2',
         password: '123123',
@@ -51,8 +63,16 @@ exports.users =[
         organization: '3*9',
         department: 'Manage',
         team: '1',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user3',
@@ -65,8 +85,16 @@ exports.users =[
         organization: '3*9',
         department: 'Manage',
         team: '1',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user4',
@@ -79,8 +107,16 @@ exports.users =[
         organization: '3*9',
         department: 'Manage',
         team: '1',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user5',
@@ -92,9 +128,17 @@ exports.users =[
         name: 'User 5',
         organization: '3*9',
         department: 'Manage',
-        team: '2',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        team: '5',
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user6',
@@ -106,9 +150,17 @@ exports.users =[
         name: 'User 6',
         organization: '3*9',
         department: 'Manage',
-        team: '2',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        team: '5',
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user7',
@@ -120,9 +172,17 @@ exports.users =[
         name: 'User 7',
         organization: '3*9',
         department: 'Manage',
-        team: '3',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        team: '5',
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user8',
@@ -134,9 +194,17 @@ exports.users =[
         name: 'User 8',
         organization: '3*9',
         department: 'Manage',
-        team: '3',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        team: '5',
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user9',
@@ -148,11 +216,19 @@ exports.users =[
         name: 'User 9',
         organization: '3*9',
         department: 'Manage',
-        team: '4',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        team: '5',
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
-    
+
     // 5*4
     {
         userID: 'user10',
@@ -164,7 +240,7 @@ exports.users =[
         name: 'User 10',
         organization: '5*4',
         department: 'Manage',
-        team: '0',
+        team: '1',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -179,8 +255,16 @@ exports.users =[
         organization: '5*4',
         department: 'Manage',
         team: '1',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user12',
@@ -193,8 +277,16 @@ exports.users =[
         organization: '5*4',
         department: 'Manage',
         team: '1',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user13',
@@ -207,11 +299,19 @@ exports.users =[
         organization: '5*4',
         department: 'Manage',
         team: '1',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
-    
-    
+
+
     {
         userID: 'user14',
         password: '123123',
@@ -223,8 +323,16 @@ exports.users =[
         organization: '5*4',
         department: 'Manage',
         team: '2',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user15',
@@ -237,8 +345,16 @@ exports.users =[
         organization: '5*4',
         department: 'Manage',
         team: '2',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
     },
     {
         userID: 'user16',
@@ -251,9 +367,17 @@ exports.users =[
         organization: '5*4',
         department: 'Manage',
         team: '2',
-        avatar: SITE_URL + "/avatar/avatar.jpg",
-        age: 100
-    },
+        avatar: SITE_URL + "/avatar/avatar.png",
+        age: 100,
+        university: 'NDU',
+        devYear: '10',
+        tecLicense: 'Web developer',
+        majorSubject: 'Control Engineering',
+        language: 'English',
+        tecLevel: 'Senior',
+        Personalities: 'Type 0',
+        devArea: 'Freelancer'
+    }
 ];
 
 

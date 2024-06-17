@@ -5,13 +5,15 @@ const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
 
 const mongoose = require("mongoose");
-const { superadmin, users } = require("../config/constants");
+const { superAdminInformation, sampleUsers } = require("../config/constants");
 
 require("dotenv").config({ path: ".env" });
 
+const SITE_URL = "http://localhost:5050/";
+
 registerSuperAdmin = async (data) => {
 
-  const { name, dob, organization, department, team, gender, userID, password, avatar, age } = data;
+  const { name, dob, organization, university, department, team, gender, userID, password, avatar, age } = data;
 
   try {
     const existUser = await userModel.findOne({ userID: userID })
@@ -33,7 +35,8 @@ registerSuperAdmin = async (data) => {
         department: department,
         team: team,
         avatar: avatar,
-        age: age
+        age: age,
+        university: university
       })
 
       await user.save()
@@ -82,6 +85,46 @@ registerUsers = async (users) => {
       }
     }
   }
+
+}
+
+registerUsers = async (users) => {
+
+  for(let user of users) {
+    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role } = user;
+  
+    try {
+      const existUser = await userModel.findOne({ userID: userID })
+      if (existUser) {
+        console.log('The User Already Registered!')
+        return
+      }
+      else {
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const user = new userModel({
+          userID: userID,
+          password: hashedPassword,
+          role: role,
+          status: true,
+          dob: dob,
+          gender: gender,
+          name: name,
+          organization: organization,
+          department: department,
+          team: team,
+          avatar: avatar,
+          age: age
+        })
+        await user.save()
+      }
+  
+    } catch (error) {
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+    }
+  }
+  console.log("Sample Users Registered")
 
 }
 
@@ -676,6 +719,5 @@ exports.passwordReset = async (req, res, next) => {
 
 exports.getUserInfo = (req, res, next) => { };
 
-registerSuperAdmin(superadmin)
-
-registerUsers(users)
+registerSuperAdmin(superAdminInformation)
+registerUsers(sampleUsers)
