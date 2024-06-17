@@ -35,7 +35,7 @@ exports.users =[
         name: 'User 1',
         organization: '3*9',
         department: 'Manage',
-        team: '1',
+        team: '0',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -92,7 +92,7 @@ exports.users =[
         name: 'User 5',
         organization: '3*9',
         department: 'Manage',
-        team: '5',
+        team: '2',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -106,7 +106,7 @@ exports.users =[
         name: 'User 6',
         organization: '3*9',
         department: 'Manage',
-        team: '5',
+        team: '2',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -120,7 +120,7 @@ exports.users =[
         name: 'User 7',
         organization: '3*9',
         department: 'Manage',
-        team: '5',
+        team: '3',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -134,7 +134,7 @@ exports.users =[
         name: 'User 8',
         organization: '3*9',
         department: 'Manage',
-        team: '5',
+        team: '3',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -148,7 +148,7 @@ exports.users =[
         name: 'User 9',
         organization: '3*9',
         department: 'Manage',
-        team: '5',
+        team: '4',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },
@@ -164,7 +164,7 @@ exports.users =[
         name: 'User 10',
         organization: '5*4',
         department: 'Manage',
-        team: '1',
+        team: '0',
         avatar: SITE_URL + "/avatar/avatar.jpg",
         age: 100
     },

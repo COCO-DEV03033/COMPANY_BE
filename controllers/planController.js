@@ -10,45 +10,48 @@ const SITE_URL = "http://localhost:5050/";
 
 
 exports.getPlans = async (req, res, next) => {
-  const { year, month } = req.body;
+  const { year, month, organization } = req.body;
   const plans = [];
-  try {
-    const allplans = await planModel.find({ year: year, month:month });
-    if (plans) {
-      for (let plan of allplans) {
-      let userInfo = {};
-      await userModel.findById(plan.userID, function (err, docs) {
-          if (err){
-              console.log(err);
-          }
-          else{
-              userInfo = docs;
-              // console.log("Result : ", docs);
-          }
-      });
 
-        let newData = {
-          '_id': plan._id,
-          'year': plan.year,
-          'month': plan.month,
-          'amount': plan.amount,
-          'user' :userInfo
+  try {
+      const allUsers = await userModel.find();
+      for (let user of allUsers) {
+        if(user.organization==organization){
+          let newData = {};
+          let existPlan = await planModel.findOne({userID:user._id, year:year, month:month});
+          if (existPlan){
+            newData = {
+              'amount': existPlan.amount,
+              'name':user.name,
+              'team':user.team,
+            }
+          } else {
+            newData = {
+              'amount': 0,
+              'name':user.name,
+              'team':user.team,
+            }
+          }
+          plans.push(newData);
         }
-        plans.push(newData);
       }
-      res.status(200).json({
-        status_code: 0,
-        message: "Get Data Successfully!",
-        data: {
-          plans: plans
-        }
-      });
-    } else {
-      return res.status(200).json({
-        status_code: 1,
-        message: "The data does not exist!",
-      });
-    }
+
+        const groupedByTeam = plans.reduce((acc, item) => {
+          const team = item.team;
+          if (!acc[team]) {
+            acc[team] = [];
+          }
+          acc[team].push(item);
+          return acc;
+        }, []);
+        console.log(groupedByTeam)
+        res.status(200).json({
+          status_code: 0,
+          message: "Get Data Successfully!",
+          data: {
+            plans: groupedByTeam
+          }
+        });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
