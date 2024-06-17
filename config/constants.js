@@ -47,7 +47,7 @@ exports.sampleUsers =[
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'User 2',
+        name: 'JangGyongIl',
         organization: '3*9',
         department: 'Manage',
         team: '1',
