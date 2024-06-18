@@ -1,11 +1,14 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
+const planModel = require("../models/planModel");
+const calendarModel = require("../models/calendarModel");
+const incomeModel = require("../models/IncomeModel");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
 
 const mongoose = require("mongoose");
-const { superAdminInformation, sampleUsers } = require("../config/constants");
+const { superAdminInformation, sampleUsers, sampleYearMonths, sampleIncomes } = require("../config/constants");
 
 require("dotenv").config({ path: ".env" });
 
@@ -96,6 +99,66 @@ registerUsers = async (users) => {
     }
   }
 
+}
+
+registerYearMonths = async (datas) => {
+  for (let data of datas) {
+    const { namelist, year, month, startDate, endDate } = data;
+
+    try {
+      const existYearMonth = await calendarModel.findOne({ year:year, month:month })
+      if (existYearMonth) {
+        console.log('The Year/Month Already Registered!')
+        return
+      }
+      else {
+        const yearmonth = new calendarModel({
+          namelist:namelist,
+          year:year,
+          month:month,
+          startDate:startDate,
+          endDate:endDate,
+        })
+        await yearmonth.save()
+        console.log("Sample Year/Month Registered")
+      }
+
+    } catch (error) {
+      console.log(error)
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+    }
+  }
+}
+
+registerIncomes = async (datas) => {
+  for (let data of datas) {
+    const { userID, date, cost } = data;
+
+    try {
+      const existIncome = await incomeModel.findOne({ userID:userID, date:date, cost: cost })
+      if (existIncome) {
+        console.log('The Income Already Registered!')
+        return
+      }
+      else {
+        const income = new incomeModel({
+          userID:userID,
+          date:date,
+          cost:cost,
+        })
+        await income.save()
+        console.log("Sample Income Registered")
+      }
+
+    } catch (error) {
+      console.log(error)
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+    }
+  }
 }
 
 exports.register = async (req, res, next) => {
@@ -691,3 +754,5 @@ exports.getUserInfo = (req, res, next) => { };
 
 registerSuperAdmin(superAdminInformation)
 registerUsers(sampleUsers)
+registerYearMonths(sampleYearMonths)
+registerIncomes(sampleIncomes)
