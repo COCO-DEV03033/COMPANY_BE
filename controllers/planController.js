@@ -36,20 +36,25 @@ exports.getPlans = async (req, res, next) => {
         }
       }
 
+      console.log("plans--->", plans);
+
         const groupedByTeam = plans.reduce((acc, item) => {
           const team = item.team;
           if (!acc[team]) {
             acc[team] = [];
           }
+          // if (team==null) {
+          //   acc[0] = [];
+          // }
           acc[team].push(item);
           return acc;
         }, []);
-        console.log(groupedByTeam)
+        // console.log(groupedByTeam)
         res.status(200).json({
           status_code: 0,
           message: "Get Data Successfully!",
           data: {
-            plans: groupedByTeam
+            plans: plans
           }
         });
   } catch (error) {
