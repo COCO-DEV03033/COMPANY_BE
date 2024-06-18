@@ -4,10 +4,6 @@ const Schema = mongoose.Schema;
 
 const ProjectSchema = new Schema(
   {
-    id: {
-      type: String,
-      require: true
-    },
     title: {
       type: String,
       require: false
@@ -16,13 +12,13 @@ const ProjectSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'users'
     },
-    devFieldID: {
-      type: Schema.Types.ObjectId,
-      ref: 'devFields'
+    devField: {
+      type: String,
+      require: false
     },
-    requiredSkill: {
-      type: Schema.Types.ObjectId,
-      ref: 'skills'
+    requiredSkills: {
+      type: [String],
+      require: false
     },    
     description: {
       type: String,
@@ -41,18 +37,22 @@ const ProjectSchema = new Schema(
       require: false
     },
     paymentDate: {
-      type: Date,
+      type: [JSON],
+      require: false
+    },
+    earnings: {
+      type: [JSON],
       require: false
     },
     siteID: {
-      type: Schema.Types.ObjectId,
-      ref: 'sites'
+      type: String,
+      require: false
     },
     progress: {
-      type: Number,
+      type: String,
       require:false
     },
-    status: {
+    projectstatus: {
       type: String,
       require:false
     },
