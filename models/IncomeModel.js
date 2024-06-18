@@ -9,8 +9,8 @@ const IncomeSchema = new Schema(
       require: true
     },
     userID: {
-      type: Schema.Types.ObjectId,
-      ref: 'users'
+      type: String,
+      require: true
     },
     date: {
       type: Date,
