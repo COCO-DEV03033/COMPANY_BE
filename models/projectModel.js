@@ -37,7 +37,11 @@ const ProjectSchema = new Schema(
       require: false
     },
     paymentDate: {
-      type: Date,
+      type: [JSON],
+      require: false
+    },
+    earnings: {
+      type: [JSON],
       require: false
     },
     siteID: {
@@ -48,7 +52,7 @@ const ProjectSchema = new Schema(
       type: String,
       require:false
     },
-    status: {
+    projectstatus: {
       type: String,
       require:false
     },
