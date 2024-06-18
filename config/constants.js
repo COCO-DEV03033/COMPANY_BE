@@ -21,7 +21,7 @@ exports.superAdminInformation =
     organization: '7*9',
     department: 'Manage',
     team: '',
-    avatar: SITE_URL + "/avatar/avatar.png",
+    avatar: SITE_URL + "/avatar/Pro.png",
     age: 100
 
 };
@@ -34,7 +34,7 @@ exports.sampleUsers = [
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'JangGyonIl',
+        name: 'JangGyongIl',
         organization: '3*9',
         department: 'Manage',
         team: '1',
@@ -45,13 +45,10 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
-
-        
     },
-   
     {
         userID: 'user2',
         password: '123123',
@@ -70,7 +67,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -92,7 +89,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -114,7 +111,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -136,7 +133,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -158,7 +155,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -180,7 +177,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -202,7 +199,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -224,7 +221,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -248,7 +245,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -270,7 +267,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -292,7 +289,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -314,7 +311,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -338,7 +335,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -360,7 +357,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
@@ -382,7 +379,7 @@ exports.sampleUsers = [
         tecLicense:'Web developer',
         majorSubject:'Control Engineering',
         language:'English',
-        tecLevel:'Senior',
+        tecLevel:9,
         Personalities:'Type 0',
         devArea:'Freelancer'
     },
