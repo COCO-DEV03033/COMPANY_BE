@@ -17,7 +17,9 @@ const SITE_URL = "http://localhost:5050/";
 //----------------      Income-Management      -------------------//
 
 exports.getIncomes = async (req, res, next) => {
-  const { year, month, organization } = req.body;
+  const year = req.query.year;
+  const month = req.query.month;
+  const organization = req.query.organization;
   try {
     const calendar = await calendarModel.findOne({ year: year, month: month });
     if (!calendar) {
@@ -100,7 +102,8 @@ exports.getOverViews = async (req, res, next) => {
 };
 
 exports.getTotalSums = async (req, res, next) => {
-  const { year, organization } = req.body;
+  const year = req.query.year;
+  const organization = req.query.organization;
   try {
 
     let totalMonths = [];
@@ -112,8 +115,8 @@ exports.getTotalSums = async (req, res, next) => {
         message: "The calendar data does not exist!",
       });
     } else {
-      for (let month of months) {
-        totalMonths.push(getMonthName(month.month, 'short'));
+      for(let i =1; i<=12;i++){
+          totalMonths.push(getMonthName(i, 'short'));
       }
     }
 
@@ -279,10 +282,8 @@ exports.updateIncome = async (req, res, next) => {
             cost: income[`day${index}`],
           });
           if (existincome) {
-            console.log(`existincome update, day${index}`, '--->', income[`day${index}`]);
           } else {
             if (income[`day${index}`] && (income[`day${index}`] != 0)) {
-              console.log(`day${index}`, '---> add', income[`day${index}`]);
               const newincome = new incomeModel({
                 userID: income.userID,
                 date: date,
@@ -313,7 +314,7 @@ exports.updateIncome = async (req, res, next) => {
 }
 
 exports.getYearMonths = async (req, res, next) => {
-  const { year, month } = req.body;
+  const year = req.query.year;
   const yearmonths = [];
   try {
     const allyearmonths = await calendarModel.find({ year: year });
@@ -456,7 +457,6 @@ exports.updateYearMonth = async (req, res, next) => {
 
 exports.deleteYearMonth = async (req, res, next) => {
   const { _id } = req.body;
-  console.log("deleted", _id);
   try {
     const result = await calendarModel.findByIdAndDelete(_id);
     if (result) {
@@ -1087,7 +1087,6 @@ async function rearrangeDataByWeek(year, month, organization) {
   // const endDate = '2024-04-26T15:00:00.000+00:00';
   const weeklyDates = getWeeklyDates(calendar.startDate, calendar.endDate);
 
-  console.log(weeklyDates)
 
   // Output the weekly date ranges
   weeklyDates.forEach((week, index) => {
@@ -1149,7 +1148,6 @@ async function rearrangeDataByWeek(year, month, organization) {
           planSum += parseFloat(item["plan"]);
           for (let i = 1; i <= weeklyDates.length; i++) {
             if (item[`${i}`]) {
-              console.log(item[`${i}`]);
               incomeSum += parseFloat(item[`${i}`]);
             }
             sum[`${i}`] += parseFloat(item[`${i}`]);
@@ -1336,7 +1334,6 @@ async function rearrangeDataByMonth(year, organization) {
           planSum += parseFloat(item["plan"]);
           for (let i = 1; i <= totalMonths.length; i++) {
             if (item[`month${i}`]) {
-              console.log(item[`month${i}`]);
               incomeSum += parseFloat(item[`month${i}`]);
             }
             sum[`month${i}`] += parseFloat(item[`month${i}`]);
