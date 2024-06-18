@@ -14,7 +14,7 @@ const SITE_URL = "http://localhost:5050/";
 
 registerSuperAdmin = async (data) => {
 
-  const { name, dob, organization, department, team, gender, userID, password, avatar, age } = data;
+  const { name, dob, organization, university, department, team, gender, userID, password, avatar, age } = data;
 
   try {
     const existUser = await userModel.findOne({ userID: userID })
@@ -36,7 +36,8 @@ registerSuperAdmin = async (data) => {
         department: department,
         team: team,
         avatar: avatar,
-        age: age
+        age: age,
+        university: university
       })
 
       await user.save()

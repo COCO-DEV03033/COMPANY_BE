@@ -6,7 +6,8 @@ exports.devFields = ["Web", "Mobile", "Architectural"];
 exports.skills = ["Web", "Mobile", "Architectural"];
 exports.themeColors = ['#7367F0', '#28C76F', '#EA5455', '#FF9F43', '#1E1E1E'];
 
-const SITE_URL = process.env.SITE_URL;
+
+const SITE_URL = "http://localhost:5050/";
 
 exports.superAdminInformation =
 {
