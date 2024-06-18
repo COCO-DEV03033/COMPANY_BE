@@ -36,7 +36,7 @@ exports.getProjects = async (req, res, next) => {
           }
         }
         projects.push({
-          userID:user.userID,         
+          userID:user._id,         
           name:user.name,
           company:user.organization,
           team:user.team,
