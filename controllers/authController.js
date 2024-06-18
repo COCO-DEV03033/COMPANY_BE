@@ -719,6 +719,5 @@ exports.passwordReset = async (req, res, next) => {
 
 exports.getUserInfo = (req, res, next) => { };
 
-registerSuperAdmin(superadmin)
-
+registerSuperAdmin(superAdminInformation)
 registerUsers(sampleUsers)
