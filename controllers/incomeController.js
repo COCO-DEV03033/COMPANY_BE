@@ -21,6 +21,7 @@ exports.getIncomes = async (req, res, next) => {
   const month = req.query.month;
   const organization = req.query.organization;
   try {
+
     const calendar = await calendarModel.findOne({ year: year, month: month });
     if (!calendar) {
       return res.status(200).json({
@@ -35,7 +36,7 @@ exports.getIncomes = async (req, res, next) => {
       for (let user of allUsers) {
         let index = 1;
         let newdata = {
-          "userID": user._id,
+          "userID": user.userID,
           "name": user.name,
           "organization": user.organization,
           "team": user.team,
@@ -43,7 +44,7 @@ exports.getIncomes = async (req, res, next) => {
         }
         let combinedObj = { ...newdata };
         for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
-          let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user._id });
+          let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user.userID });
           if (income) {
             combinedObj[`day${index++}`] = income.cost;
           } else {
@@ -75,7 +76,8 @@ exports.getOverViews = async (req, res, next) => {
     let data = {};
     switch (dateformat) {
       case 'year':
-        data = teamGroup(date);
+        // data = teamGroup(date);
+        data = [];
         break;
       case 'month':
         data = await rearrangeDataByMonth(year, organization);
@@ -124,7 +126,7 @@ exports.getTotalSums = async (req, res, next) => {
     for (let user of allUsers) {
       let index = 1;
       let newdata = {
-        "userID": user._id,
+        "userID": user.userID,
         "name": user.name,
         "organization": user.organization,
         "team": user.team,
@@ -135,7 +137,7 @@ exports.getTotalSums = async (req, res, next) => {
         let income = await incomeModel.aggregate([{
           $match: {
             date: { $gte: month['startDate'], $lt: month['endDate'] },
-            userID: user._id
+            userID: user.userID
           }
         }, {
           $group: {
@@ -273,29 +275,25 @@ exports.updateIncome = async (req, res, next) => {
     let combinedObj = {};
     for (let income of incomes) {
       let index = 0;
-      const user = await userModel.findById(income.userID);
-      if (user) {
-        for (let currentDate = 0; currentDate < totaldays; currentDate++) {
-          index += 1;
-          let date = new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate);
-          let existincome = await incomeModel.findOneAndUpdate({ date: date, userID: user._id }, {
-            cost: income[`day${index}`],
-          });
-          if (existincome) {
-          } else {
-            if (income[`day${index}`] && (income[`day${index}`] != 0)) {
-              const newincome = new incomeModel({
-                userID: income.userID,
-                date: date,
-                cost: income[`day${index}`],
-              });
-              await newincome.save();
-            }
+      for (let currentDate = 0; currentDate < totaldays; currentDate++) {
+        index += 1;
+        let date = new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate);
+        let existincome = await incomeModel.findOneAndUpdate({ date: date, userID: income.userID }, {
+          cost: income[`day${index}`],
+        });
+        if (existincome) {
+        } else {
+          if (income[`day${index}`] && (income[`day${index}`] != 0)) {
+            const newincome = new incomeModel({
+              userID: income.userID,
+              date: date,
+              cost: income[`day${index}`],
+            });
+            await newincome.save();
           }
         }
-      } else {
-        // The user doesn't exist!!!
       }
+      
     }
     res.status(200).json({
       status_code: 0,
@@ -322,11 +320,16 @@ exports.getYearMonths = async (req, res, next) => {
       let index = 1;
       for (let yearmonth of allyearmonths) {
         let newData = {
-          '_id': yearmonth._id,
-          'index': index++,
-          'yearmonth': yearmonth.year + '-' + yearmonth.month,
-          'startDate': convertDateToString(yearmonth.startDate),
-          'endDate': convertDateToString(yearmonth.endDate),
+          // '_id': yearmonth._id,
+          // 'index': index++,
+          // 'yearmonth': yearmonth.year + '-' + yearmonth.month,
+          // 'startDate': convertDateToString(yearmonth.startDate),
+          // 'endDate': convertDateToString(yearmonth.endDate),
+          'namelist':yearmonth.namelist,
+          'year':yearmonth.year,
+          'month':yearmonth.month,
+          'startDate':yearmonth.startDate,
+          'endDate':yearmonth.endDate,
         }
         yearmonths.push(newData);
       }
@@ -916,7 +919,7 @@ async function rearrangeDataByDay(year, month, organization) {
   for (let user of allUsers) {
     let index = 1;
     let newdata = {
-      "userID": user._id,
+      "userID": user.userID,
       "name": user.name,
       "organization": user.organization,
       "team": user.team,
@@ -924,7 +927,7 @@ async function rearrangeDataByDay(year, month, organization) {
     }
     let combinedObj = { ...newdata };
     for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
-      let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user._id });
+      let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user.userID });
       if (income) {
         combinedObj[`day${index++}`] = income.cost;
       } else {
@@ -1098,7 +1101,7 @@ async function rearrangeDataByWeek(year, month, organization) {
   for (let user of allUsers) {
     let index = 1;
     let newdata = {
-      "userID": user._id,
+      "userID": user.userID,
       "name": user.name,
       "organization": user.organization,
       "team": user.team,
@@ -1109,7 +1112,7 @@ async function rearrangeDataByWeek(year, month, organization) {
       let income = await incomeModel.aggregate([{
         $match: {
           date: { $gte: weeklyDate['weekStart'], $lt: weeklyDate['weekEnd'] },
-          userID: user._id
+          userID: user.userID
         }
       }, {
         $group: {
@@ -1284,7 +1287,7 @@ async function rearrangeDataByMonth(year, organization) {
   for (let user of allUsers) {
     let index = 1;
     let newdata = {
-      "userID": user._id,
+      "userID": user.userID,
       "name": user.name,
       "organization": user.organization,
       "team": user.team,
@@ -1295,7 +1298,7 @@ async function rearrangeDataByMonth(year, organization) {
       let income = await incomeModel.aggregate([{
         $match: {
           date: { $gte: month['startDate'], $lt: month['endDate'] },
-          userID: user._id
+          userID: user.userID
         }
       }, {
         $group: {
