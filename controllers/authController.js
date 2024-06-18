@@ -52,9 +52,9 @@ registerSuperAdmin = async (data) => {
 
 registerUsers = async (users) => {
 
-  for(let user of users) {
-    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role } = user;
-  
+  for (let user of users) {
+    const { name, dob, organization, university, department, team, gender, userID, password, avatar, age, role, tecLicense, majorSubject, devYear, language, tecLevel, devArea, Personalities } = user;
+
     try {
       const existUser = await userModel.findOne({ userID: userID })
       if (existUser) {
@@ -75,57 +75,27 @@ registerUsers = async (users) => {
           department: department,
           team: team,
           avatar: avatar,
-          age: age
+          university: university,
+          age: age,
+          tech_field: tecLicense,
+          major_subject: majorSubject,
+          dev_year: devYear,
+          language: language,
+          tech_level: tecLevel,
+          personality: Personalities,
+          dev_area: devArea
         })
         await user.save()
+        console.log("Sample User Registered")
       }
-  
+
     } catch (error) {
+      console.log(error)
       if (!error.statusCode) {
         error.statusCode = 500;
       }
     }
   }
-
-}
-
-registerUsers = async (users) => {
-
-  for(let user of users) {
-    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role } = user;
-  
-    try {
-      const existUser = await userModel.findOne({ userID: userID })
-      if (existUser) {
-        console.log('The User Already Registered!')
-        return
-      }
-      else {
-        const hashedPassword = await bcrypt.hash(password, 12);
-        const user = new userModel({
-          userID: userID,
-          password: hashedPassword,
-          role: role,
-          status: true,
-          dob: dob,
-          gender: gender,
-          name: name,
-          organization: organization,
-          department: department,
-          team: team,
-          avatar: avatar,
-          age: age
-        })
-        await user.save()
-      }
-  
-    } catch (error) {
-      if (!error.statusCode) {
-        error.statusCode = 500;
-      }
-    }
-  }
-  console.log("Sample Users Registered")
 
 }
 
@@ -197,14 +167,14 @@ exports.checkUserID = async (req, res, next) => {
 exports.importUser = async (req, res, next) => {
 
   const { userData } = req.body
-  
+
   try {
     await userModel.insertMany(userData);
     console.log('Done!');
-      res.status(200).json({
-          message: "User Data imported successfully!"
-      })
-  } catch(e) {
+    res.status(200).json({
+      message: "User Data imported successfully!"
+    })
+  } catch (e) {
     console.log(e);
   }
 
@@ -394,7 +364,7 @@ exports.approveUser = async (req, res, next) => {
       })
     }
 
-    const updateResult = await userModel.findOne({userID: userID}).updateMany({
+    const updateResult = await userModel.findOne({ userID: userID }).updateMany({
       $set: {
         status: true
       }
@@ -430,7 +400,7 @@ exports.rejectUser = async (req, res, next) => {
       })
     }
 
-    const updateResult = await userModel.findOne({userID: userID}).updateMany({
+    const updateResult = await userModel.findOne({ userID: userID }).updateMany({
       $set: {
         status: false
       }
