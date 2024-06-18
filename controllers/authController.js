@@ -58,7 +58,7 @@ registerUsers = async (users) => {
     try {
       const existUser = await userModel.findOne({ userID: userID })
       if (existUser) {
-        console.log('The User Already Registered!')
+        console.log('The User Already Registered!!!!')
         return
       }
       else {
