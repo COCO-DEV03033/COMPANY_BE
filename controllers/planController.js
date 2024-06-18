@@ -10,8 +10,13 @@ const SITE_URL = "http://localhost:5050/";
 
 
 exports.getPlans = async (req, res, next) => {
-  const { year, month, organization } = req.body;
+ 
+  const year = req.query.year;
+  const month = req.query.month;
+  const organization = req.query.organization;
+
   const plans = [];
+
 
   try {
       const allUsers = await userModel.find();
@@ -38,23 +43,35 @@ exports.getPlans = async (req, res, next) => {
 
       console.log("plans--->", plans);
 
-        const groupedByTeam = plans.reduce((acc, item) => {
-          const team = item.team;
-          if (!acc[team]) {
-            acc[team] = [];
-          }
-          // if (team==null) {
-          //   acc[0] = [];
-          // }
-          acc[team].push(item);
-          return acc;
-        }, []);
+      const groupedData = plans.reduce((acc, curr) => {
+        const { team } = curr;
+        if (!acc[team]) {
+          acc[team] = [];
+        }
+        acc[team].push(curr);
+        return acc;
+      }, {});
+
+      if(groupedData[0]==null){
+        groupedData[0]=[];
+      }
+
+
+
+        // const groupedByTeam = plans.reduce((acc, item) => {
+        //   const { team } = item.team;
+        //   if (!acc[team]) {
+        //     acc[team] = [];
+        //   }
+        //   acc[team].push(item);
+        //   return acc;
+        // }, []);
         // console.log(groupedByTeam)
         res.status(200).json({
           status_code: 0,
           message: "Get Data Successfully!",
           data: {
-            plans: plans
+            plans: groupedData
           }
         });
   } catch (error) {
