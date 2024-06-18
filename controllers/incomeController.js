@@ -320,16 +320,11 @@ exports.getYearMonths = async (req, res, next) => {
       let index = 1;
       for (let yearmonth of allyearmonths) {
         let newData = {
-          // '_id': yearmonth._id,
-          // 'index': index++,
-          // 'yearmonth': yearmonth.year + '-' + yearmonth.month,
-          // 'startDate': convertDateToString(yearmonth.startDate),
-          // 'endDate': convertDateToString(yearmonth.endDate),
-          'namelist':yearmonth.namelist,
-          'year':yearmonth.year,
-          'month':yearmonth.month,
-          'startDate':yearmonth.startDate,
-          'endDate':yearmonth.endDate,
+          '_id': yearmonth._id,
+          'index': index++,
+          'yearmonth': yearmonth.year + '-' + yearmonth.month,
+          'startDate': convertDateToString(yearmonth.startDate),
+          'endDate': convertDateToString(yearmonth.endDate),
         }
         yearmonths.push(newData);
       }
