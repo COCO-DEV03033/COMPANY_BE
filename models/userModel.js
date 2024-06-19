@@ -78,7 +78,7 @@ const UserSchema = new Schema(
       require: false,
     },
     tech_level: {
-      type: Number,
+      type: String,
       require: false,
     },
     lang_level: {

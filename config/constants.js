@@ -41,13 +41,14 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
+
 
 
     },
@@ -59,20 +60,21 @@ exports.sampleUsers = [
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'User 2',
+        name: 'JangGyongIl',
         organization: '3*9',
         department: 'Manage',
         team: '1',
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student',
+        enterdate: '2022-05-07'
     },
     {
         userID: 'user3',
@@ -81,20 +83,20 @@ exports.sampleUsers = [
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'User 3',
+        name: 'SoHyonUng',
         organization: '3*9',
         department: 'Manage',
         team: '1',
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        old_job: 'Student',
+        special: 'Foreign langlevel'
     },
     {
         userID: 'user4',
@@ -103,20 +105,20 @@ exports.sampleUsers = [
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'User 4',
+        name: 'SoHyonUng',
         organization: '3*9',
         department: 'Manage',
         team: '1',
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user5',
@@ -125,20 +127,20 @@ exports.sampleUsers = [
         status: true,
         dob: '2024-05-07T07:00:00.000Z',
         gender: 'male',
-        name: 'User 5',
+        name: 'SoHyonUng',
         organization: '3*9',
         department: 'Manage',
         team: '5',
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user6',
@@ -154,13 +156,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user7',
@@ -176,13 +178,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user8',
@@ -198,13 +200,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user9',
@@ -220,13 +222,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
 
     // 5*4
@@ -244,13 +246,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user11',
@@ -266,13 +268,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user12',
@@ -288,13 +290,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user13',
@@ -310,13 +312,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
 
 
@@ -334,13 +336,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user15',
@@ -356,13 +358,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     },
     {
         userID: 'user16',
@@ -378,13 +380,13 @@ exports.sampleUsers = [
         avatar: SITE_URL + "/avatar/avatar.png",
         age: 100,
         university: 'NDU',
-        devYear: '10',
+        enterdate: '2022-05-07',
         tecLicense: 'Web developer',
-        majorSubject: 'Control Engineering',
-        language: 'English',
+        mainskill: 'Control Engineering',
+        langlevel: 'English',
         tecLevel: 'Senior',
-        Personalities: 'Type 0',
-        devArea: 'Freelancer'
+        special: 'Foreign langlevel',
+        old_job: 'Student'
     }
 ];
 

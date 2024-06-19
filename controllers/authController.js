@@ -92,7 +92,8 @@ registerUsers = async (users) => {
 registerUsers = async (users) => {
 
   for(let user of users) {
-    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role } = user;
+    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role, university, enterdate, oldjob, tecLicense, mainskill, tecLevel, 
+      langlevel, special} = user;
   
     try {
       const existUser = await userModel.findOne({ userID: userID })
@@ -114,7 +115,15 @@ registerUsers = async (users) => {
           department: department,
           team: team,
           avatar: avatar,
-          age: age
+          age: age,
+          university: university,
+          enter_date: enterdate,
+          old_job: oldjob,
+          tech_field: tecLicense,
+          main_skill: mainskill, 
+          tech_level: tecLevel,
+          lang_level:langlevel,
+          special:special
         })
         await user.save()
       }
