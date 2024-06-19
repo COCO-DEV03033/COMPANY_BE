@@ -6,11 +6,10 @@ const mongoose = require("mongoose");
 
 require("dotenv").config({ path: ".env" });
 
-exports.getProjects = async (req, res, next) => {
-  // const { year, month } = req.body;
+exports.getProjects = async (req, res, next) => { 
   const projects = [];
   try {
-    const allusers = await userModel.find();
+    const allusers = await userModel.find({ userID: { $ne: "superAdmin0303" } });
     if (allusers) {
       for (let user of allusers) {
       const datas = [];
@@ -20,23 +19,27 @@ exports.getProjects = async (req, res, next) => {
               let newData = {
                 'id': project._id,
                 'title': project.title,
-                'plan': 100,
-                'income': 100,
-                'devField': 'Dev Field',
-                'cost': 100,
+                'devField':project.devField,
+                'requiredSkills':project.requiredSkills,
+                'clientLocation':project.clientLocation,
+                'projectstatus':project.projectstatus,
+                'type': project.type,
+                'potentialBudget':project.potentialBudget,
+                'description': project.description,
+                'note': project.note,
+                'paymentDate': project.paymentDate,
+                'earnings':project.earnings,                
                 'totalCost': 120,
                 'note': "Note",
-              }
+              }              
               datas.push(newData);
           }
         }
         projects.push({
-          user:{
-            id:user._id,
-            name:user.name,
-            company:user.organization,
-            team:user.team,
-          },
+          userID:user._id,         
+          name:user.name,
+          company:user.organization,
+          team:user.team,
           project:datas
         });
       }
@@ -62,15 +65,28 @@ exports.getProjects = async (req, res, next) => {
 };
 
 exports.addProject = async (req, res, next) => {
+  console.log(req.body)
 
-  const { title, userID } = req.body;
+  const { title, userID, devField, requiredSkills, type, clientLocation, projectstatus, siteID, potentialBudget, description,earnings, note} = req.body;
   try {
-    const existproject = await projectModel.findOne({ title:title });
+    const existproject = await projectModel.findOne({ title:title, devField:devField, requiredSkills:requiredSkills, type:type, siteID:siteID });    
     if (!existproject) {
       const newproject = new projectModel({
         title: title,
-        userID:userID,
+        userID: userID,
+        devField: devField,
+        requiredSkills: requiredSkills,
+        projectstatus:projectstatus,
+        type:type,
+        clientLocation:clientLocation,
+        siteID:siteID,
+        potentialBudget:potentialBudget,
+        description:description,
+        earnings:earnings,
+        note:note
+
       })
+      console.log('projectstatus------------------------------------->', projectstatus)
       await newproject.save()
       res.status(200).json({
         status_code: 0,
@@ -80,6 +96,15 @@ exports.addProject = async (req, res, next) => {
             'id': newproject.id,
             'title': newproject.title,
             'userID': newproject.userID,
+            'devField': newproject.devField,
+            'requiredSkills':newproject.requiredSkills,
+            'type': newproject.type,
+            'clientLocation':newproject.clientLocation,
+            'projectstatus':newproject.projectstatus,
+            'siteID': newproject.siteID,
+            'potentialBudget': newproject.potentialBudget,
+            'description' :newproject.description,
+            'note':note
           }
         }
       });
@@ -99,22 +124,39 @@ exports.addProject = async (req, res, next) => {
 
 exports.getProjectByID = async (req, res, next) => {
 
-  const { ID } = req.params
-
+  const { id } = req.params
   try {
-
-    const existProject = await projectModel.findOne({ _id: ID }).lean()
-
-    if (!existProject) {
-      const error = new Error("Project with this ID not found!");
-      error.statusCode = 401;
-      throw error;
-    }
-
+    const datas = [];
+      let allprojects = await projectModel.find({userID:id});
+      console.log(allprojects)
+      if(allprojects.length){
+        for (let project of allprojects){
+            let newData = {
+              'id': project.id,
+              'title': project.title,
+              'plan': 100,
+              'income': 100,
+              'devField': project.devField,
+              'requiredSkills':project.requiredSkills,
+              'clientLocation':project.clientLocation,
+              'type':project.type,
+              'projectstatus':project.projectstatus,       
+              'siteID':project.siteID,
+              'potentialBudget': project.potentialBudget,
+              'description' : project.description,
+              'earnings' : project.earnings,
+              'note': project.note       
+            }
+            datas.push(newData);
+        }
+      }
     res.status(200).json({
-      existProject
+      status_code: 0,
+      message: "Get Data Successfully!",
+      data: {
+        projects:datas
+      }
     });
-
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -125,13 +167,22 @@ exports.getProjectByID = async (req, res, next) => {
 
 exports.updateProject = async (req, res, next) => {
 
-  const { _id, year, month, amount } = req.body;
+  const { id } = req.params
+  const { title, devField, requiredSkills, type, clientLocation, projectstatus, siteID, potentialBudget, description, note, earnings } = req.body;
 
   try {
-    const updateproject = await projectModel.findOneAndUpdate({ _id: _id }, {
-      // year: year,
-      // month: month,
-      amount: amount,
+    const updateproject = await projectModel.findOneAndUpdate({ _id: id }, {
+      title: title,
+      devField: devField,
+      requiredSkills: requiredSkills,
+      type: type,
+      clientLocation: clientLocation,
+      projectstatus: projectstatus,
+      siteID: siteID,
+      potentialBudget: potentialBudget,
+      description: description,
+      note: note,
+      earnings: earnings
     });
 
     if (updateproject) {
@@ -177,20 +228,5 @@ exports.deleteProject = async (req, res, next) => {
   }
 }
 
-
-function convertDateToString(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${month}-${day}`;
-}
-
-function getTotalDatesBetween(startDate, endDate) {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-  return totalDays;
-}
 
 

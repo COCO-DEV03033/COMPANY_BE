@@ -1,12 +1,14 @@
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/userModel");
-const planModel = require("../models/planModel")
+const planModel = require("../models/planModel");
+const calendarModel = require("../models/calendarModel");
+const incomeModel = require("../models/IncomeModel");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
 
 const mongoose = require("mongoose");
-const { superAdminInformation, sampleUsers } = require("../config/constants");
+const { superAdminInformation, sampleUsers, sampleYearMonths, sampleIncomes } = require("../config/constants");
 
 require("dotenv").config({ path: ".env" });
 
@@ -52,9 +54,9 @@ registerSuperAdmin = async (data) => {
 
 registerUsers = async (users) => {
 
-  for(let user of users) {
-    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role } = user;
-  
+  for (let user of users) {
+    const { name, dob, organization, university, department, team, gender, userID, password, avatar, age, role, tecLicense, majorSubject, devYear, language, tecLevel, devArea, Personalities } = user;
+
     try {
       const existUser = await userModel.findOne({ userID: userID })
       if (existUser) {
@@ -75,12 +77,22 @@ registerUsers = async (users) => {
           department: department,
           team: team,
           avatar: avatar,
-          age: age
+          university: university,
+          age: age,
+          tech_field: tecLicense,
+          major_subject: majorSubject,
+          dev_year: devYear,
+          language: language,
+          tech_level: tecLevel,
+          personality: Personalities,
+          dev_area: devArea
         })
         await user.save()
+        console.log("Sample User Registered")
       }
-  
+
     } catch (error) {
+      console.log(error)
       if (!error.statusCode) {
         error.statusCode = 500;
       }
@@ -89,53 +101,64 @@ registerUsers = async (users) => {
 
 }
 
-registerUsers = async (users) => {
+registerYearMonths = async (datas) => {
+  for (let data of datas) {
+    const { namelist, year, month, startDate, endDate } = data;
 
-  for(let user of users) {
-    const { name, dob, organization, department, team, gender, userID, password, avatar, age, role, university, enterdate, oldjob, tecLicense, mainskill, tecLevel, 
-      langlevel, special} = user;
-  
     try {
-      const existUser = await userModel.findOne({ userID: userID })
-      if (existUser) {
-        console.log('The User Already Registered!')
+      const existYearMonth = await calendarModel.findOne({ year:year, month:month })
+      if (existYearMonth) {
+        console.log('The Year/Month Already Registered!')
         return
       }
       else {
-        const hashedPassword = await bcrypt.hash(password, 12);
-        const user = new userModel({
-          userID: userID,
-          password: hashedPassword,
-          role: role,
-          status: true,
-          dob: dob,
-          gender: gender,
-          name: name,
-          organization: organization,
-          department: department,
-          team: team,
-          avatar: avatar,
-          age: age,
-          university: university,
-          enter_date: enterdate,
-          old_job: oldjob,
-          tech_field: tecLicense,
-          main_skill: mainskill, 
-          tech_level: tecLevel,
-          lang_level:langlevel,
-          special:special
+        const yearmonth = new calendarModel({
+          namelist:namelist,
+          year:year,
+          month:month,
+          startDate:startDate,
+          endDate:endDate,
         })
-        await user.save()
+        await yearmonth.save()
+        console.log("Sample Year/Month Registered")
       }
-  
+
     } catch (error) {
+      console.log(error)
       if (!error.statusCode) {
         error.statusCode = 500;
       }
     }
   }
-  console.log("Sample Users Registered")
+}
 
+registerIncomes = async (datas) => {
+  for (let data of datas) {
+    const { userID, date, cost } = data;
+
+    try {
+      const existIncome = await incomeModel.findOne({ userID:userID, date:date, cost: cost })
+      if (existIncome) {
+        console.log('The Income Already Registered!')
+        return
+      }
+      else {
+        const income = new incomeModel({
+          userID:userID,
+          date:date,
+          cost:cost,
+        })
+        await income.save()
+        console.log("Sample Income Registered")
+      }
+
+    } catch (error) {
+      console.log(error)
+      if (!error.statusCode) {
+        error.statusCode = 500;
+      }
+    }
+  }
 }
 
 exports.register = async (req, res, next) => {
@@ -206,14 +229,14 @@ exports.checkUserID = async (req, res, next) => {
 exports.importUser = async (req, res, next) => {
 
   const { userData } = req.body
-  
+
   try {
     await userModel.insertMany(userData);
     console.log('Done!');
-      res.status(200).json({
-          message: "User Data imported successfully!"
-      })
-  } catch(e) {
+    res.status(200).json({
+      message: "User Data imported successfully!"
+    })
+  } catch (e) {
     console.log(e);
   }
 
@@ -403,7 +426,7 @@ exports.approveUser = async (req, res, next) => {
       })
     }
 
-    const updateResult = await userModel.findOne({userID: userID}).updateMany({
+    const updateResult = await userModel.findOne({ userID: userID }).updateMany({
       $set: {
         status: true
       }
@@ -439,7 +462,7 @@ exports.rejectUser = async (req, res, next) => {
       })
     }
 
-    const updateResult = await userModel.findOne({userID: userID}).updateMany({
+    const updateResult = await userModel.findOne({ userID: userID }).updateMany({
       $set: {
         status: false
       }
@@ -731,3 +754,5 @@ exports.getUserInfo = (req, res, next) => { };
 
 registerSuperAdmin(superAdminInformation)
 registerUsers(sampleUsers)
+registerYearMonths(sampleYearMonths)
+registerIncomes(sampleIncomes)
