@@ -44,7 +44,8 @@ exports.getIncomes = async (req, res, next) => {
         }
         let combinedObj = { ...newdata };
         for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
-          let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user.userID });
+          // const dateWithoutTime = new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate).setHours(0, 0, 0, 0);
+          let income = await incomeModel.findOne({ date: getDateOnly(new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate)), userID: user.userID });
           if (income) {
             combinedObj[`day${index++}`] = income.cost;
           } else {
@@ -80,7 +81,7 @@ exports.getOverViews = async (req, res, next) => {
         data = [];
         break;
       case 'month':
-        data = await rearrangeDataByMonth(year, organization);
+        data = await rearrangeDataByYear(year, organization);
         break;
       case 'week':
         data = await rearrangeDataByWeek(year, month, organization);
@@ -103,9 +104,40 @@ exports.getOverViews = async (req, res, next) => {
   }
 };
 
+exports.getOverViewsForCard = async (req, res, next) => {
+  const { year, month, organization, projectType, country, universty, jobSite, role, dateformat, } = req.body;
+  try {
+    let data = {};
+    if (year =='all') {
+      data = await rearrangeDataByAllYear(organization, true);
+    } else {
+      if (month=='all'){
+        data = await rearrangeDataByYear(year, organization, true);
+      } else {
+        data = await rearrangeDataByMonth(year, month, organization, true);
+      }
+    }
+    res.status(200).json({
+      status_code: 0,
+      message: "Get Data Successfully!",
+      data: {
+        datas: data,
+      }
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
+// Incomes according to researcher by year ,month
+
+// Top Max Income for 
+
 exports.getTotalSums = async (req, res, next) => {
   const year = req.query.year;
-  const organization = req.query.organization;
   try {
 
     let totalMonths = [];
@@ -117,10 +149,29 @@ exports.getTotalSums = async (req, res, next) => {
         message: "The calendar data does not exist!",
       });
     } else {
-      for(let i =1; i<=12;i++){
-          totalMonths.push(getMonthName(i, 'short'));
+      // for(let i =1; i<=12;i++){
+      //     totalMonths.push(getMonthName(i, 'short'));
+      // }
+      for(let month of months){
+        totalMonths.push(getMonthName(month.month, 'short'));
       }
     }
+
+    let minNation = 999999999;
+    let minComapany39 = 999999999;
+    let minComapany54 = 999999999;
+    let minComapany82 = 999999999;
+    let minComapanyAI = 999999999;
+    let minComapanyNET = 999999999;
+    let minEngineer = 999999999;
+
+    let maxNation = 0;
+    let maxComapany39 = 0;
+    let maxComapany54 = 0
+    let maxComapany82 = 0;
+    let maxComapanyAI = 0;
+    let maxComapanyNET = 0 ;
+    let maxEngineer = 0 ;
 
     const allUsers = await userModel.find();
     for (let user of allUsers) {
@@ -189,6 +240,30 @@ exports.getTotalSums = async (req, res, next) => {
             };
             for (let i = 1; i <= months.length; i++) {
                 result[`month${i}`] = parseFloat(sum[`month${i}`].toFixed(2))
+                if(companyname == '3*9') {
+                  if(minComapany39 > result[`month${i}`]){
+                    minComapany39 = result[`month${i}`]
+                  } 
+                  if(maxComapany39 < result[`month${i}`]){
+                    maxComapany39 = result[`month${i}`]
+                  } 
+                }
+                else if(companyname == '5*4') {
+                  if(minComapany54 > result[`month${i}`]){
+                    minComapany54 = result[`month${i}`]
+                  } 
+                  if(maxComapany54 < result[`month${i}`]){
+                    maxComapany54 = result[`month${i}`]
+                  } 
+                }
+                else if(companyname == '8*2') {
+                  if(minComapany82 > result[`month${i}`]){
+                    minComapany82 = result[`month${i}`]
+                  } 
+                  if(maxComapany82 < result[`month${i}`]){
+                    maxComapany82 = result[`month${i}`]
+                  } 
+                }
             }
     
             datas.push(result);
@@ -236,7 +311,13 @@ exports.getTotalSums = async (req, res, next) => {
                             if (item[`month${i}`]) {
                                 item["income"] += parseFloat(item[`month${i}`]);
                             }
-                        }
+                            if(minEngineer > item["income"]){
+                              minEngineer = item["income"]
+                            } 
+                            if(maxEngineer < item["income"]){
+                              maxEngineer = item["income"]
+                            } 
+                          }
                         datas.push(item);
                     });
                 }
@@ -250,6 +331,15 @@ exports.getTotalSums = async (req, res, next) => {
       data: {
         totalsums: datas,
         months: totalMonths,
+        minComapany39: minComapany39,
+        maxComapany39: maxComapany39,
+        minComapany54: minComapany54,
+        maxComapany54: maxComapany54,
+        minComapany82: minComapany82,
+        maxComapany82: maxComapany82,
+
+        minEngineer: minEngineer,
+        maxEngineer: maxEngineer,
       }
     });
   } catch (error) {
@@ -259,6 +349,165 @@ exports.getTotalSums = async (req, res, next) => {
     next(error);
   }
 };
+
+// exports.getTotalSums = async (req, res, next) => {
+//   const year = req.query.year;
+//   try {
+
+//     let totalMonths = [];
+//     let incomes = [];
+//     const months = await calendarModel.find({ year: year });
+//     if (!months) {
+//       return res.status(200).json({
+//         status_code: 1,
+//         message: "The calendar data does not exist!",
+//       });
+//     } else {
+//       // for(let i =1; i<=12;i++){
+//       //     totalMonths.push(getMonthName(i, 'short'));
+//       // }
+//       for(let month of months){
+//         totalMonths.push(getMonthName(month.month, 'short'));
+//       }
+//     }
+
+//     const allUsers = await userModel.find();
+//     for (let user of allUsers) {
+//       let index = 1;
+//       let newdata = {
+//         "userID": user.userID,
+//         "name": user.name,
+//         "organization": user.organization,
+//         "team": user.team,
+//         "plan": 0,
+//       }
+//       let combinedObj = { ...newdata };
+//       for (let month of months) {
+//         let income = await incomeModel.aggregate([{
+//           $match: {
+//             date: { $gte: month['startDate'], $lt: month['endDate'] },
+//             userID: user.userID
+//           }
+//         }, {
+//           $group: {
+//             _id: '$userID',
+//             totalCost: { $sum: '$cost' }
+//           }
+//         }]);
+//         if (income.length) {
+//           combinedObj[`month${index++}`] = income[0].totalCost;
+//         } else {
+//           combinedObj[`month${index++}`] = 0;
+//         }
+//       }
+//       incomes.push(combinedObj);
+//     }
+
+//     // Company 
+//     let datas = [];
+//     let companies = ['3*9', '5*4', '8*2'];
+//     for (let companyname of companies) {
+//         let filterdData = incomes.filter(
+//             (obj) => obj.organization === companyname
+//         );
+//         if(filterdData.length){
+
+//             // Initialize the sums
+//             let planSum = 0;
+//             let incomeSum = 0;
+    
+//             let sum = {};
+//             for (let i = 1; i <= months.length; i++) {
+//                 sum[`month${i}`] = 0;
+//             }
+//             // Loop through the filtered items and calculate the sums
+//             filterdData.forEach((item) => {
+//                 planSum += parseFloat(item["plan"]);
+//                 for (let i = 1; i <= months.length; i++) {
+//                     if (item[`month${i}`]) {
+//                         incomeSum += parseFloat(item[`month${i}`]);
+//                     }
+//                     sum[`month${i}`] += parseFloat(item[`month${i}`]);
+//                 }
+//             });
+    
+//             let result = {
+//                 company: companyname + ' Company',
+//                 plan: parseFloat(planSum.toFixed(2)),
+//                 income: parseFloat(incomeSum.toFixed(2))
+//             };
+//             for (let i = 1; i <= months.length; i++) {
+//                 result[`month${i}`] = parseFloat(sum[`month${i}`].toFixed(2))
+//             }
+    
+//             datas.push(result);
+//             // Group the data by the "team" field
+//             let groupedByTeam = filterdData.reduce((acc, obj) => {
+//                 if (!acc[obj.team]) {
+//                     acc[obj.team] = {
+//                         plan: 0,
+//                         income: 0,
+//                         items: [],
+//                     };
+//                     for (let i = 1; i <= months.length; i++) {
+//                         acc[obj.team][`month${i}`] = 0;
+//                     }
+//                 }
+//                 acc[obj.team].plan += parseFloat(obj.plan);
+    
+//                 for (let i = 1; i <= months.length; i++) {
+//                     if (obj[`month${i}`]) {
+//                         acc[obj.team].income += parseFloat(obj[`month${i}`]);
+//                     }
+//                     acc[obj.team][`month${i}`] += parseFloat(obj[`month${i}`]);
+//                 }
+//                 acc[obj.team].items.push(obj);
+//                 return acc;
+//             }, {});
+//             let keyNames = Object.keys(groupedByTeam);
+//             keyNames.forEach((key) => {
+    
+//                 let teamresult = {
+//                     teamshow: key+' Team',
+//                     plan: parseFloat(groupedByTeam[key]["plan"].toFixed(2)),
+//                     income: parseFloat(groupedByTeam[key]["income"].toFixed(2)),
+//                 };
+    
+//                 for (let i = 1; i <= months.length; i++) {
+//                     teamresult[`month${i}`] = parseFloat(groupedByTeam[key][`month${i}`].toFixed(2));
+//                 }
+//                 datas.push(teamresult);
+    
+//                 if (groupedByTeam[key].hasOwnProperty("items")) {
+//                     groupedByTeam[key].items.map((item) => {
+//                         item["income"] = 0;
+//                         for (let i = 1; i <= months.length; i++) {
+//                             if (item[`month${i}`]) {
+//                                 item["income"] += parseFloat(item[`month${i}`]);
+//                             }
+//                         }
+//                         datas.push(item);
+//                     });
+//                 }
+//             });
+//         }
+//     }
+
+//     res.status(200).json({
+//       status_code: 0,
+//       message: "Get Data Successfully!",
+//       data: {
+//         totalsums: datas,
+//         months: totalMonths,
+//       }
+//     });
+//   } catch (error) {
+//     if (!error.statusCode) {
+//       error.statusCode = 500;
+//     }
+//     next(error);
+//   }
+// };
 
 exports.updateIncome = async (req, res, next) => {
   const { incomes, year, month } = req.body;
@@ -278,7 +527,7 @@ exports.updateIncome = async (req, res, next) => {
       for (let currentDate = 0; currentDate < totaldays; currentDate++) {
         index += 1;
         let date = new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate);
-        let existincome = await incomeModel.findOneAndUpdate({ date: date, userID: income.userID }, {
+        let existincome = await incomeModel.findOneAndUpdate({ date: getDateOnly(date), userID: income.userID }, {
           cost: income[`day${index}`],
         });
         if (existincome) {
@@ -286,7 +535,7 @@ exports.updateIncome = async (req, res, next) => {
           if (income[`day${index}`] && (income[`day${index}`] != 0)) {
             const newincome = new incomeModel({
               userID: income.userID,
-              date: date,
+              date: getDateOnly(date),
               cost: income[`day${index}`],
             });
             await newincome.save();
@@ -491,413 +740,6 @@ function getTotalDatesBetween(startDate, endDate) {
   return totalDays;
 }
 
-function organizationGroup(date = 'week') {
-  let data = {};
-  switch (date) {
-    case 'year':
-      data = {
-        series: [
-          {
-            name: '3*9',
-            data: [130, 120, 150]
-          },
-          {
-            name: '5*4',
-            data: [200, 300, 250]
-          },
-          {
-            name: '8*2',
-            data: [100, 80, 110]
-          },
-        ],
-        chartOptions: {
-          chart: {
-            height: 350,
-            zoom: {
-              enabled: false
-            }
-          },
-          colors: themeColors,
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          title: {
-            text: '-----',
-            align: 'left'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 1
-            }
-          },
-          xaxis: {
-            categories: ['2022', '2023', '2024']
-          }
-        },
-        details: [
-          {
-            group: '3*9',
-            total: 1000,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '5*4',
-            total: 1400,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '8*2',
-            total: 700,
-            average: 2,
-            distPercent: 30,
-          },
-        ]
-      };
-      break;
-    case 'month':
-      data = {
-        series: [
-          {
-            name: '3*9',
-            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-          },
-          {
-            name: '5*4',
-            data: [10, 41, 35, 51, 49, 62, 69, 91, 200]
-          },
-          {
-            name: '8*2',
-            data: [120, 41, 35, 51, 49, 62, 69, 91, 150]
-          },
-        ],
-        chartOptions: {
-          chart: {
-            height: 350,
-            zoom: {
-              enabled: false
-            }
-          },
-          colors: themeColors,
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          title: {
-            text: '-----',
-            align: 'left'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 1
-            }
-          },
-          xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-          }
-        },
-        details: [
-          {
-            group: '3*9',
-            total: 100,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '5*4',
-            total: 140,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '8*2',
-            total: 70,
-            average: 2,
-            distPercent: 30,
-          },
-        ]
-      };
-      break;
-    default:
-      data = {
-        series: [
-          {
-            name: '3*9',
-            data: [10, 41, 35, 51, 49, 69, 148]
-          },
-          {
-            name: '5*4',
-            data: [10, 41, 35, 51, 49, 62, 91]
-          },
-          {
-            name: '8*2',
-            data: [120, 51, 49, 62, 69, 91, 150]
-          },
-        ],
-        chartOptions: {
-          chart: {
-            height: 350,
-            zoom: {
-              enabled: false
-            }
-          },
-          colors: themeColors,
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          title: {
-            text: '-----',
-            align: 'left'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 1
-            }
-          },
-          xaxis: {
-            categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-          }
-        },
-        details: [
-          {
-            group: '3*9',
-            total: 10,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '5*4',
-            total: 14,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '8*2',
-            total: 7,
-            average: 2,
-            distPercent: 30,
-          },
-        ]
-      };
-  }
-  return data;
-}
-
-function teamGroup(date = 'week') {
-  let data = {};
-  switch (date) {
-    case 'year':
-      data = {
-        series: [
-          {
-            name: '1 team',
-            data: [130, 120, 150]
-          },
-          {
-            name: '2 team',
-            data: [200, 300, 250]
-          },
-          {
-            name: '3 team',
-            data: [100, 80, 110]
-          },
-        ],
-        chartOptions: {
-          chart: {
-            height: 350,
-            zoom: {
-              enabled: false
-            }
-          },
-          colors: themeColors,
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          title: {
-            text: '-----',
-            align: 'left'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 1
-            }
-          },
-          xaxis: {
-            categories: ['2022', '2023', '2024']
-          }
-        },
-        details: [
-          {
-            group: '1 team',
-            total: 100,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '2 team',
-            total: 140,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '3 team',
-            total: 70,
-            average: 2,
-            distPercent: 30,
-          },
-        ]
-      };
-      break;
-    case 'month':
-      data = {
-        series: [
-          {
-            name: '1 team',
-            data: [85, 27, 63, 71, 92, 48, 74, 106, 183]
-          },
-          {
-            name: '2 team',
-            data: [92, 35, 54, 77, 61, 83, 58, 78, 225]
-          },
-          {
-            name: '3 team',
-            data: [143, 29, 47, 65, 82, 55, 64, 99, 166]
-          },
-        ],
-        chartOptions: {
-          chart: {
-            height: 350,
-            zoom: {
-              enabled: false
-            }
-          },
-          colors: themeColors,
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          title: {
-            text: '-----',
-            align: 'left'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 1
-            }
-          },
-          xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-          }
-        },
-        details: [
-          {
-            group: '1 team',
-            total: 10,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '2 team',
-            total: 15,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '3 team',
-            total: 7,
-            average: 2,
-            distPercent: 30,
-          },
-        ]
-      };
-      break;
-    default:
-      data = {
-        series: [
-          {
-            name: '1 team',
-            data: [22, 57, 41, 38, 73, 82, 134]
-          },
-          {
-            name: '2 team',
-            data: [17, 35, 47, 28, 55, 75, 103]
-          },
-          {
-            name: '3 team',
-            data: [134, 43, 64, 77, 84, 106, 172]
-          },
-        ],
-        chartOptions: {
-          chart: {
-            height: 350,
-            zoom: {
-              enabled: false
-            }
-          },
-          colors: themeColors,
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'straight'
-          },
-          title: {
-            text: '-----',
-            align: 'left'
-          },
-          grid: {
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 1
-            }
-          },
-          xaxis: {
-            categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-          },
-        },
-        details: [
-          {
-            group: '1 team',
-            total: 10,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '2 team',
-            total: 3,
-            average: 2,
-            distPercent: 30,
-          },
-          {
-            group: '3 team',
-            total: 2,
-            average: 2,
-            distPercent: 30,
-          },
-        ]
-      };
-  }
-  return data;
-}
 //Day
 async function rearrangeDataByDay(year, month, organization) {
   const calendar = await calendarModel.findOne({ year: year, month: month });
@@ -922,7 +764,7 @@ async function rearrangeDataByDay(year, month, organization) {
     }
     let combinedObj = { ...newdata };
     for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
-      let income = await incomeModel.findOne({ date: new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate), userID: user.userID });
+      let income = await incomeModel.findOne({ date: getDateOnly(new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate)), userID: user.userID });
       if (income) {
         combinedObj[`day${index++}`] = income.cost;
       } else {
@@ -1068,7 +910,7 @@ async function rearrangeDataByDay(year, month, organization) {
   return data;
 }
 
-//Month
+//Week
 async function rearrangeDataByWeek(year, month, organization) {
 
   let namelist = [];
@@ -1261,8 +1103,144 @@ async function rearrangeDataByWeek(year, month, organization) {
   return data;
 }
 
-//Month
-async function rearrangeDataByMonth(year, organization) {
+//By Month
+async function rearrangeDataByMonth(year, month, organization, isCard=false) {
+
+  const calendar = await calendarModel.findOne({ year: year, month: month });
+  if (!calendar) {
+    return {
+      isData: false,
+      message: "The calendar data does not exist!",
+    };
+  }
+  let totaldays = getTotalDatesBetween(calendar.startDate, calendar.endDate);
+  let incomes = [];
+
+  const allUsers = await userModel.find();
+  for (let user of allUsers) {
+    let index = 1;
+    let newdata = {
+      "userID": user.userID,
+      "name": user.name,
+      "organization": user.organization,
+      "team": user.team,
+      "plan": 0,
+    }
+    let combinedObj = { ...newdata };
+    for (let currentDate = 0; currentDate <= totaldays; currentDate++) {
+      let income = await incomeModel.findOne({ date: getDateOnly(new Date(calendar.startDate.getFullYear(), calendar.startDate.getMonth(), calendar.startDate.getDate() + currentDate)), userID: user.userID });
+      if (income) {
+        combinedObj[`day${index++}`] = income.cost;
+      } else {
+        combinedObj[`day${index++}`] = 0;
+      }
+    }
+    incomes.push(combinedObj);
+  }
+
+  let datas = [];
+  let companies = ['3*9', '5*4', '8*2'];
+  for (let companyname of companies) {
+    let filterdData = incomes.filter(
+      (obj) => obj.organization === companyname
+    );
+    if (filterdData.length) {
+      if (organization == 'all') {
+        // Initialize the sums
+        let planSum = 0;
+        let incomeSum = 0;
+
+        let sum = {};
+        for (let i = 1; i <= totaldays; i++) {
+          sum[`day${i}`] = 0;
+        }
+        // Loop through the filtered items and calculate the sums
+        filterdData.forEach((item) => {
+          planSum += parseFloat(item["plan"]);
+          for (let i = 1; i <= totaldays; i++) {
+            if (item[`day${i}`]) {
+              incomeSum += parseFloat(item[`day${i}`]);
+            }
+            sum[`day${i}`] += parseFloat(item[`day${i}`]);
+          }
+        });
+
+        let result = {
+          name: companyname,
+          // plan: planSum,
+          // income: incomeSum,
+        };
+        let companyIncome = [];
+        for (let i = 1; i <= totaldays; i++) {
+          companyIncome.push(sum[`day${i}`]);
+        }
+        result[`data`] = companyIncome;
+        datas.push(result);
+      } else {
+        if (companyname == organization) {
+          // Group the data by the "team" field
+          let groupedByTeam = filterdData.reduce((acc, obj) => {
+            if (!acc[obj.team]) {
+              acc[obj.team] = {
+                plan: 0,
+                income: 0,
+                items: [],
+              };
+              for (let i = 1; i <= totaldays; i++) {
+                acc[obj.team][`day${i}`] = 0;
+              }
+            }
+            acc[obj.team].plan += parseFloat(obj.plan);
+
+            for (let i = 1; i <= totaldays; i++) {
+              if (obj[`day${i}`]) {
+                acc[obj.team].income += parseFloat(obj[`day${i}`]);
+              }
+              acc[obj.team][`day${i}`] += parseFloat(obj[`day${i}`]);
+            }
+            acc[obj.team].items.push(obj);
+            return acc;
+          }, {});
+          let keyNames = Object.keys(groupedByTeam);
+          keyNames.forEach((key) => {
+            let teamresult = {
+              name: "Team" + key,
+              // plan: groupedByTeam[key]["plan"],
+              // income: groupedByTeam[key]["income"],
+            };
+            let teamincome = [];
+            for (let i = 1; i <= totaldays; i++) {
+              teamincome.push(groupedByTeam[key][`day${i}`]);
+            }
+            teamresult['data'] = teamincome;
+            datas.push(teamresult);
+          });
+        }
+      }
+    }
+  }
+  if(isCard){
+    let finalResult = [];
+    for(let data of datas){
+      let sum = 0;
+      for(let income of data['data']) {
+        sum +=income;
+      }
+      finalResult.push({
+        "name":data['name'],
+        'income': sum,
+        'plan': 20000,
+        'average': 2000,
+      });
+    }
+    return finalResult;
+  } else {
+    return datas;
+  }
+}
+
+//By Year
+async function rearrangeDataByYear(year, organization, isCard=false) {
 
   let totalMonths = [];
   let incomes = [];
@@ -1392,58 +1370,268 @@ async function rearrangeDataByMonth(year, organization) {
       }
     }
   }
-
-  data = {
-    series: datas,
-    chartOptions: {
-      chart: {
-        height: 350,
-        zoom: {
-          enabled: false
-        }
-      },
-      colors: themeColors,
-      dataLabels: {
-        enabled: false
-      },
-      stroke: {
-        curve: 'straight'
-      },
-      title: {
-        text: '-----',
-        align: 'left'
-      },
-      grid: {
-        row: {
-          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-          opacity: 1
-        }
-      },
-      xaxis: {
-        categories: totalMonths
+  if (isCard) {
+    let finalResult = [];
+    for(let data of datas){
+      let sum = 0;
+      for(let income of data['data']) {
+        sum +=income;
       }
-    },
-    details: [
-      {
-        group: '3*9',
-        total: 1000,
-        average: 2,
-        distPercent: 30,
+      finalResult.push({
+        "name":data['name'],
+        'income': sum,
+        'plan': 20000,
+        'average': 2000,
+      });
+    }
+    return finalResult;
+  } else {
+    data = {
+      series: datas,
+      chartOptions: {
+        chart: {
+          height: 350,
+          zoom: {
+            enabled: false
+          }
+        },
+        colors: themeColors,
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'straight'
+        },
+        title: {
+          text: '-----',
+          align: 'left'
+        },
+        grid: {
+          row: {
+            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 1
+          }
+        },
+        xaxis: {
+          categories: totalMonths
+        }
       },
-      {
-        group: '5*4',
-        total: 1400,
-        average: 2,
-        distPercent: 30,
+      details: [
+        {
+          group: '3*9',
+          total: 1000,
+          average: 2,
+          distPercent: 30,
+        },
+        {
+          group: '5*4',
+          total: 1400,
+          average: 2,
+          distPercent: 30,
+        },
+        {
+          group: '8*2',
+          total: 700,
+          average: 2,
+          distPercent: 30,
+        },
+      ]
+    };
+  }
+
+  return data;
+}
+
+// All Year
+async function rearrangeDataByAllYear(organization, isCard=false) {
+
+  let totalYears = [2022,2023,2024,2025];
+  let incomes = [];
+
+  const allUsers = await userModel.find();
+  for (let user of allUsers) {
+    let index = 1;
+    let newdata = {
+      "userID": user.userID,
+      "name": user.name,
+      "organization": user.organization,
+      "team": user.team,
+      "plan": 0,
+    }
+
+    let combinedObj = { ...newdata };
+    for (let year of totalYears) {
+      let income = await incomeModel.aggregate([{
+        $match: {
+          date: { $gte: `${year}-01-01`, $lt: `${year}-12-31` },
+          userID: user.userID
+        }
+      }, {
+        $group: {
+          _id: '$userID',
+          totalCost: { $sum: '$cost' }
+        }
+      }]);
+      if (income.length) {
+        combinedObj[`year${index++}`] = income[0].totalCost;
+      } else {
+        combinedObj[`year${index++}`] = 0;
+      }
+    }
+    incomes.push(combinedObj);
+  }
+
+  let data = {};
+  let datas = [];
+  let companies = ['3*9', '5*4', '8*2'];
+  for (let companyname of companies) {
+    let filterdData = incomes.filter(
+      (obj) => obj.organization === companyname
+    );
+    if (filterdData.length) {
+      if (organization == 'all') {
+        // Initialize the sums
+        let planSum = 0;
+        let incomeSum = 0;
+
+        let sum = {};
+        for (let i = 1; i <= totalYears.length; i++) {
+          sum[`year${i}`] = 0;
+        }
+        // Loop through the filtered items and calculate the sums
+        filterdData.forEach((item) => {
+          planSum += parseFloat(item["plan"]);
+          for (let i = 1; i <= totalYears.length; i++) {
+            if (item[`year${i}`]) {
+              incomeSum += parseFloat(item[`year${i}`]);
+            }
+            sum[`year${i}`] += parseFloat(item[`year${i}`]);
+          }
+        });
+
+        let result = {
+          name: companyname,
+          // plan: planSum,
+          // income: incomeSum,
+        };
+        let companyIncome = [];
+        for (let i = 1; i <= totalYears.length; i++) {
+          companyIncome.push(sum[`year${i}`]);
+        }
+        result[`data`] = companyIncome;
+        datas.push(result);
+      } else {
+        if (companyname == organization) {
+          // Group the data by the "team" field
+          let groupedByTeam = filterdData.reduce((acc, obj) => {
+            if (!acc[obj.team]) {
+              acc[obj.team] = {
+                plan: 0,
+                income: 0,
+                items: [],
+              };
+              for (let i = 1; i <= totalYears.length; i++) {
+                acc[obj.team][`year${i}`] = 0;
+              }
+            }
+            acc[obj.team].plan += parseFloat(obj.plan);
+
+            for (let i = 1; i <= totalYears.length; i++) {
+              if (obj[`year${i}`]) {
+                acc[obj.team].income += parseFloat(obj[`year${i}`]);
+              }
+              acc[obj.team][`year${i}`] += parseFloat(obj[`year${i}`]);
+            }
+            acc[obj.team].items.push(obj);
+            return acc;
+          }, {});
+          let keyNames = Object.keys(groupedByTeam);
+          keyNames.forEach((key) => {
+            let teamresult = {
+              name: "Team" + key,
+              // plan: groupedByTeam[key]["plan"],
+              // income: groupedByTeam[key]["income"],
+            };
+            let teamincome = [];
+            for (let i = 1; i <= totalYears.length; i++) {
+              teamincome.push(groupedByTeam[key][`year${i}`]);
+            }
+            teamresult['data'] = teamincome;
+            datas.push(teamresult);
+          });
+        }
+      }
+    }
+  }
+  if (isCard) {
+    let finalResult = [];
+    for(let data of datas){
+      let sum = 0;
+      for(let income of data['data']) {
+        sum +=income;
+      }
+      finalResult.push({
+        "name":data['name'],
+        'income': sum,
+        'plan': 20000,
+        'average': 2000,
+      });
+    }
+    return finalResult;
+  } else {
+    data = {
+      series: datas,
+      chartOptions: {
+        chart: {
+          height: 350,
+          zoom: {
+            enabled: false
+          }
+        },
+        colors: themeColors,
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'straight'
+        },
+        title: {
+          text: '-----',
+          align: 'left'
+        },
+        grid: {
+          row: {
+            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 1
+          }
+        },
+        xaxis: {
+          categories: totalMonths
+        }
       },
-      {
-        group: '8*2',
-        total: 700,
-        average: 2,
-        distPercent: 30,
-      },
-    ]
-  };
+      details: [
+        {
+          group: '3*9',
+          total: 1000,
+          average: 2,
+          distPercent: 30,
+        },
+        {
+          group: '5*4',
+          total: 1400,
+          average: 2,
+          distPercent: 30,
+        },
+        {
+          group: '8*2',
+          total: 700,
+          average: 2,
+          distPercent: 30,
+        },
+      ]
+    };
+  }
+
   return data;
 }
 
@@ -1480,4 +1668,10 @@ function getMonthName(monthNumber, format = 'long') {
   return format === 'short' ? monthName.slice(0, 3) : monthName;
 }
 
-
+function getDateOnly(dateString) {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}

@@ -4,13 +4,9 @@ const Schema = mongoose.Schema;
 
 const PlanSchema = new Schema(
   {
-    id: {
-      type: String,
-      require: true
-    },
     userID: {
-      type: Schema.Types.ObjectId,
-      ref: 'users'
+      type: String,
+      require: true,
     },
     year: {
       type: Number,

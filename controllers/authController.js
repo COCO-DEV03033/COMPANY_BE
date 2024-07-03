@@ -3,12 +3,13 @@ const userModel = require("../models/userModel");
 const planModel = require("../models/planModel");
 const calendarModel = require("../models/calendarModel");
 const incomeModel = require("../models/IncomeModel");
+const projectModel = require("../models/projectModel");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const { jwtDecode } = require("jwt-decode");
 
 const mongoose = require("mongoose");
-const { superAdminInformation, sampleUsers, sampleYearMonths, sampleIncomes } = require("../config/constants");
+const { superAdminInformation, sampleUsers, sampleYearMonths, sampleIncomes, samplePlanings, sampleProjects } = require("../config/constants");
 
 require("dotenv").config({ path: ".env" });
 
@@ -29,7 +30,7 @@ registerSuperAdmin = async (data) => {
       const user = new userModel({
         userID: userID,
         password: hashedPassword,
-        roles: 'superAdmin',
+        role: 'SuperAdmin',
         status: true,
         dob: dob,
         gender: gender,
@@ -55,12 +56,12 @@ registerSuperAdmin = async (data) => {
 registerUsers = async (users) => {
 
   for (let user of users) {
-    const { name, dob, organization, university, department, team, gender, userID, password, avatar, age, role, tecLicense, majorSubject, devYear, language, tecLevel, devArea, Personalities } = user;
+    const { name, dob, organization, university, department, team, gender, userID, password, avatar, age, currentAddress, role, techLicense, majorSubject, langLevel, techLevel, enterDate, oldJob, special,  mainSkill} = user;
 
     try {
       const existUser = await userModel.findOne({ userID: userID })
       if (existUser) {
-        console.log('The User Already Registered!')
+        console.log('The User Already Registered!!!!')
         return
       }
       else {
@@ -79,16 +80,18 @@ registerUsers = async (users) => {
           avatar: avatar,
           university: university,
           age: age,
-          tech_field: tecLicense,
+          tech_field: techLicense,
           major_subject: majorSubject,
-          dev_year: devYear,
-          language: language,
-          tech_level: tecLevel,
-          personality: Personalities,
-          dev_area: devArea
+          lang_level: langLevel ,
+          tech_level: techLevel,
+          enter_date: enterDate,
+          old_job: oldJob,
+          main_skill: mainSkill,
+          special: special,
+          enter_date: enterDate,
+          current_address: currentAddress,
         })
         await user.save()
-        console.log("Sample User Registered")
       }
 
     } catch (error) {
@@ -99,6 +102,13 @@ registerUsers = async (users) => {
     }
   }
 
+}
+function getDateOnly(dateString) {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 registerYearMonths = async (datas) => {
@@ -116,8 +126,8 @@ registerYearMonths = async (datas) => {
           namelist:namelist,
           year:year,
           month:month,
-          startDate:startDate,
-          endDate:endDate,
+          startDate:getDateOnly(startDate),
+          endDate:getDateOnly(endDate),
         })
         await yearmonth.save()
         console.log("Sample Year/Month Registered")
@@ -137,7 +147,7 @@ registerIncomes = async (datas) => {
     const { userID, date, cost } = data;
 
     try {
-      const existIncome = await incomeModel.findOne({ userID:userID, date:date, cost: cost })
+      const existIncome = await incomeModel.findOne({ userID:userID, date:getDateOnly(date), cost: cost })
       if (existIncome) {
         console.log('The Income Already Registered!')
         return
@@ -145,7 +155,7 @@ registerIncomes = async (datas) => {
       else {
         const income = new incomeModel({
           userID:userID,
-          date:date,
+          date:getDateOnly(date),
           cost:cost,
         })
         await income.save()
@@ -157,6 +167,73 @@ registerIncomes = async (datas) => {
       if (!error.statusCode) {
         error.statusCode = 500;
       }
+    }
+  }
+}
+
+registerPlanings = async (datas) => {
+  for (let data of datas) {
+    const {year, month, amount, userID} = data;
+    
+    try {
+      const existPlaning = await planModel.findOne({userID: userID, year: year, month: month, amount: amount})
+      if (existPlaning) {
+        console.log("Planing Seeds already registered!")
+        return
+      }
+      else {
+        const planing = new planModel({
+          year: year,
+          month: month,
+          userID: userID,
+          amount: amount
+        })
+
+        await planing.save()
+
+        console.log("Sample Planings Registered!")
+      }
+      
+    } catch (error) {
+      
+    }
+  }
+}
+
+registerProjects = async (datas) => {
+  for (let data of datas) {
+    const { requiredSkills, earnings, title, userID, devField, projectstatus, type, clientLocation, siteID, potentialBudget, description, note } = data;
+
+    try {
+      const existProject = await projectModel.findOne({userID: userID, requiredSkills: requiredSkills, earnings: earnings, title: title, devField: devField, projectstatus: projectstatus, type: type, clientLocation: clientLocation, siteID: siteID, potentialBudget: potentialBudget, description: description, note: note})
+
+      if (existProject) {
+        console.log("Project Seeds already registered!")
+        return
+      }
+      else {
+        const project = new projectModel({
+          userID: userID,
+          requiredSkills: requiredSkills,
+          earnings: earnings,
+          title: title,
+          devField: devField,
+          projectstatus: projectstatus,
+          type: type,
+          clientLocation: clientLocation,
+          siteID: siteID,
+          potentialBudget: potentialBudget,
+          description: description,
+          note: note
+        })
+
+        await project.save()
+
+        console.log("Sample project registered!")
+      }
+      
+    } catch (error) {
+      
     }
   }
 }
@@ -303,7 +380,7 @@ exports.login = async (req, res, next) => {
 //----------------      User-Management      -------------------//
 
 exports.getAllUser = async (req, res, next) => {
-  const allUser = await userModel.find();
+  const allUser = await userModel.find({role: {$ne: "SuperAdmin"}});  
   res.status(200).json({
     allUser: allUser,
   });
@@ -361,7 +438,7 @@ exports.removeUser = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
 
   try {
-    const { name, dob, organization, department, team, gender, userID, status, role } = req.body;
+    const { name, dob, organization, department, enter_date, language, team, current_address, university, old_job, gender, userID, status, role, special, main_skill } = req.body;
     const file = req.files ? req.files.file : '';
 
     const result = await userModel.findOne({ userID: userID }).updateMany({
@@ -369,10 +446,23 @@ exports.updateUser = async (req, res, next) => {
         name: name,
         role: role,
         department: department,
+        gender: gender,
+        dob: dob,
         team: team,
-        organization: organization
+        organization: organization,
+        university: university,
+        old_job: old_job,
+        enter_date: enter_date,
+        lang_level: language,
+        current_address: current_address,
+        special: special,
+        main_skill: main_skill
       }
+      
     })
+
+    
+
 
     if (result.ok < 1) {
       res.status(501).json({
@@ -492,8 +582,6 @@ exports.postSignup = async (req, res, next) => {
 
   const { userID, password } = req.body;
 
-  console.log(userID, password);
-
   try {
     const exsitUser = await userModel.findOne({ userID: userID });
     if (exsitUser) {
@@ -536,11 +624,8 @@ var loadedUser;
 exports.postLogin = async (req, res, next) => {
   const { userID, password } = req.body.data;
 
-  console.log(req.body)
-
   try {
     const user = await userModel.findOne({ userID: userID });
-    console.log("user done; ", user);
 
     if (!user) {
       const error = new Error("user with this email not found!");
@@ -693,7 +778,6 @@ exports.avatarUpload = async (req, res, next) => {
         });
 
         await userModel.findOne({ _id: userId }).then((res) => {
-          console.log("bbbbbbbbbbbbb", res.avatar);
           avatarURL = res.avatar;
           loadedUser.avatar = avatarURL;
           // res.send({ name: myFile.name, path: avatarURL });
@@ -756,3 +840,5 @@ registerSuperAdmin(superAdminInformation)
 registerUsers(sampleUsers)
 registerYearMonths(sampleYearMonths)
 registerIncomes(sampleIncomes)
+registerPlanings(samplePlanings)
+registerProjects(sampleProjects)

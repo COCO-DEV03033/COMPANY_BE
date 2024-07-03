@@ -15,6 +15,7 @@ router.post("/deleteYearMonth", incomeController.deleteYearMonth);
 
 
 router.post("/overView", incomeController.getOverViews);
+router.post("/overViewForCard", incomeController.getOverViewsForCard);
 router.get("/totalSums", incomeController.getTotalSums);
 
 module.exports = router;

@@ -9,8 +9,8 @@ const ProjectSchema = new Schema(
       require: false
     },
     userID: {
-      type: Schema.Types.ObjectId,
-      ref: 'users'
+      type: String,
+      require: false
     },
     devField: {
       type: String,

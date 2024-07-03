@@ -34,7 +34,7 @@ const UserSchema = new Schema({
   role: {
     type: String,
     require: true,
-    default: 'Engineer' // superAdmin, President, Officer, Researcher, Engineer,
+    default: 'Engineer' // SuperAdmin, President, Officer, Researcher, Engineer,
   },
   age: {
     type: Number,
@@ -76,12 +76,16 @@ const UserSchema = new Schema({
     type: String,
     require: false,
   },
+  current_address: {
+    type: String,
+    require: false,
+  },
   tech_level: {
     type: Number,
     require: false,
   },
   lang_level: {
-    type: String,
+    type: [String],
     require: false,
   },
   special: {
