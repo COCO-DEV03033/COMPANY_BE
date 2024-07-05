@@ -461,9 +461,6 @@ exports.updateUser = async (req, res, next) => {
       
     })
 
-    
-
-
     if (result.ok < 1) {
       res.status(501).json({
         message: 'userData update Faild'
